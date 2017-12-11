@@ -1,0 +1,16 @@
+<schema>
+	<element name="pmisperformancecategory" tablename="pmis_performance_categorys">
+		<field name="objid" primary="true"/>	
+		<field name="code" requied="true"/>	
+		<field name="name" requied="true"/>	
+		<field name="description" requied="false"/>	
+		<field name="recordlog_datecreated" requied="true"/>	
+		<field name="recordlog_createdbyuserid" requied="true"/>	
+		<field name="recordlog_createdbyuser" requied="true"/>	
+		<field name="recordlog_dateoflastupdate" requied="true"/>	
+		<field name="recordlog_lastupdatedbyuserid" requied="true"/>	
+		<field name="recordlog_lastupdatedbyuser" requied="true"/>	
+	</element>
+
+</schema>
+

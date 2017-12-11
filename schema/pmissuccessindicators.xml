@@ -1,0 +1,17 @@
+<schema>
+	<element name="pmissuccessindicators" tablename="pmis_successindicators">
+		<field name="objid" primary="true" />
+		<field name="state" required="true" />
+		<field name="title" required="true" />
+		<field name="code" />
+		<field name="allotedbudget" />
+		<field name="actualaccomplishment" />
+		<field name="remarks" />
+		<field name="parentid" />
+		<field name="type" />
+		<field name="lft" required="true" />
+		<field name="rgt" required="true" />
+	</element>
+
+</schema>
+
