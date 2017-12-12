@@ -36,7 +36,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
     }
 
-    
+
 
 	public void afterNode( def selectedNode, def list ) {
 		list.each { 
@@ -84,7 +84,9 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	}
 
 	public def open(o) {
-		return em.findInfo(o);
+		def x = em.findInfo(o);
+		x.orgs =[]
+		return x;
 	}
 
 	public void beforeList( def p ) {
