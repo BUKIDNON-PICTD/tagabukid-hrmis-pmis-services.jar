@@ -36,6 +36,8 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
     }
 
+    
+
 	public void afterNode( def selectedNode, def list ) {
 		list.each { 
 			if(selectedNode.root == true) {
