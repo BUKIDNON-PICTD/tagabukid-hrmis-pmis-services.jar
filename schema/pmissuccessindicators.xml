@@ -13,5 +13,10 @@
 		<field name="rgt" required="true" />
 	</element>
 
+	<element name="pmissuccessindicatorsorg" tablename="pmis_successindicators_org">
+		<field name="siid" primary="true"/>
+		<field name="orgid" primary="true"/>
+	</element>
+
 </schema>
 

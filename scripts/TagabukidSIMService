@@ -13,6 +13,12 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	@Env
 	def env;
 
+	@ActiveDB(value='pmissuccessindicators', em='tagabukid_subay')
+	def emorg;
+
+	@Service('TagabukidSubayTransactionService')
+	def dtsSvc 
+
 
     void addNode(parent){
     	em.changeNodeRight([myRight:parent.rgt]);
@@ -36,15 +42,50 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
     }
 
+    public void afterCreate(o){
+    	
+    	saveitems(o);
+
+    }
+
+    public void afterUpdate(o){
+    	
+    	saveitems(o);
+
+    }
+
+    void saveitems(o){
+		def oldSuccessIndicatorOrg = em.getSuccessIndicatorOrg([xxx:o.objid])
+
+		if (!o.orgs)
+			o.orgs = []
+	
+		def todelete = oldSuccessIndicatorOrg - o.orgs.collect{[siid:o.objid,orgid:it.objid]} 
+		def toadd 	 = o.orgs.collect{[siid:o.objid,orgid:it.objid]} - oldSuccessIndicatorOrg
+		
+
+		todelete.each{
+			em.deleteSuccessIndicatorOrg([siid:o.objid, orgid:it.orgid])
+		}
+
+		toadd.each{
+			
+			em.create(it, 'pmissuccessindicatorsorg')
+		}
+	}
+
 
 
 	public void afterNode( def selectedNode, def list ) {
+		
 		list.each { 
+			it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
 			if(selectedNode.root == true) {
 				it.folder = true;
 			}	
 			it.caption = it.code + " (" + it.title + ") ";
 			it.filetype = "sim-"+it.type;
+
 			if (it.type == 'pmis'){
 				it.children = [ 
 					[caption:'MFO', filetype: 'sim-mfo'],
@@ -67,6 +108,14 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			}
 			
 		}
+
+		def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
+		
+		if (selectedNode.type == 'mfo'){
+			list = list.findAll{it.orgs.find{it.orgid == orgid}}
+			println list
+		}
+
 	}
 
 	@ProxyMethod
@@ -85,7 +134,15 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
 	public def open(o) {
 		def x = em.findInfo(o);
-		x.orgs =[]
+		x.orgs = em.getSuccessIndicatorOrg([xxx:o.objid])
+		if(x.orgs){
+			x.orgs.each{ y ->
+				def org = emorg.findOrgById([orgid:y.orgid])
+				y.objid = org.OrgUnitId.toString()
+				y.name = org.Entity.Name
+				y.code = org.Entity.AcronymAbbreviation
+			}
+		}
 		return x;
 	}
 
@@ -101,9 +158,14 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	}
 	
 	public void afterList( def p, def list ) {
+		
+
 		list.each { 
+			it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
 			it.filetype = 'sim-'+it.type;
+
 		}
+
 	}
 	
     @ProxyMethod

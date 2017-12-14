@@ -1,0 +1,30 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import com.rameses.eserver.*;
+import java.rmi.server.UID;
+
+public class TagabukidPMISLookupService
+{
+
+	@Service('TagabukidSubayLookupUtilService')
+	def util 
+
+	// @ProxyMethod
+	// public def lookupDIN( params ) {
+	// 	return util.lookupDIN( 'dts:getDocumentbyDIN', params,'objid' )
+	// }
+
+	
+
+	@ProxyMethod
+	public def lookupOrgUnitByParent( params ) {
+		return util.lookup( 'pmissuccessindicators:getOrgUnitByParent', params,'OrgUnitId' )
+	}
+
+	@ProxyMethod
+	public def lookupUserOrg( params ) {
+		return util.lookup( 'pmissuccessindicators:getUserOrg', params,'org_objid' )
+	}
+
+
+}

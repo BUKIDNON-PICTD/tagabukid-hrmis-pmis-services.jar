@@ -172,3 +172,18 @@ UPDATE pmis_successindicators SET rgt = rgt + 2 WHERE rgt > $P{myLeft}
 [changeParentLeft]
 UPDATE pmis_successindicators SET lft = lft + 2 WHERE lft > $P{myLeft}
 
+[getSuccessIndicatorOrg]
+SELECT * FROM pmis_successindicators_org WHERE siid = $P{xxx}
+
+[deleteSuccessIndicatorOrg]
+DELETE FROM pmis_successindicators_org WHERE siid = $P{siid} AND orgid = $P{orgid}
+
+[findOrgById]
+SELECT * FROM subay_org_unit WHERE OrgUnitId = $P{orgid}
+
+[getOrgUnitByParent]
+SELECT * FROM subay_org_unit
+WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
+OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
+AND ParentOrgUnitId = $P{orgparentid}
+ORDER BY Entity_Name
