@@ -18,5 +18,15 @@
 		<field name="orgid" primary="true"/>
 	</element>
 
+	<element name="pmisrating" tablename="pmis_ratings">
+		<field name="objid" primary="true" />
+		<field name="type" required="true" />
+		<field name="state" required="true" />
+		<field name="siid" required="true" />
+		<field name="title" />
+		<field name="rating"  />
+	</element>
+
+
 </schema>
 

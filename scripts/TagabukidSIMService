@@ -39,23 +39,34 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
     	o.lft = parent.lft + 1;
 		o.rgt = parent.lft + 2;
-
+		
+	
+	
     }
 
     public void afterCreate(o){
+    	if(o.type=='ip'){
+    		saveitemsipcr(o);
+    	}else{
+    		saveitems(o);	
+    	}
     	
-    	saveitems(o);
+
 
     }
 
     public void afterUpdate(o){
+	   	if(o.type=='ip'){
+	   		updateitemsipcr(o);
+	   	}else{
+	   		saveitems(o);	
+	   	}
     	
-    	saveitems(o);
-
+ 	
     }
 
     void saveitems(o){
-		def oldSuccessIndicatorOrg = em.getSuccessIndicatorOrg([xxx:o.objid])
+		def oldSuccessIndicatorOrg = em.getSuccessIndicatorOrg([xxx:o.objid]) // many to many
 
 		if (!o.orgs)
 			o.orgs = []
@@ -71,8 +82,54 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 		toadd.each{
 			
 			em.create(it, 'pmissuccessindicatorsorg')
+		
 		}
+		
+	
 	}
+
+	void saveitemsipcr(o){
+		// println o
+		// em.deleteSuccessIndicatorRating([xxx:o.objid])	// one to many
+		o.qualities.each{
+			it.objid = 'QSI' + new java.rmi.server.UID();
+			it.type = 'Q'
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'pmisrating')
+		}
+
+		o.timeliness.each{
+			it.objid = 'TSI' + new java.rmi.server.UID(); 
+			it.type = 'T'
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'pmisrating')
+		}
+		o.efficiency.each{
+			it.objid = 'ESI' + new java.rmi.server.UID();
+			it.type = 'E'
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'pmisrating')
+		}
+	
+	}
+
+	void updateitemsipcr(o){
+		o.qualities.each{
+			em.update(it, 'pmisrating')
+		}
+		o.timeliness.each{
+			em.update(it, 'pmisrating')
+		}
+		o.efficiency.each{
+			em.update(it, 'pmisrating')
+		}
+	
+	}
+
+
 
 
 
@@ -133,16 +190,28 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	}
 
 	public def open(o) {
+		println "TEST" *50
+		println o
 		def x = em.findInfo(o);
-		x.orgs = em.getSuccessIndicatorOrg([xxx:o.objid])
-		if(x.orgs){
-			x.orgs.each{ y ->
-				def org = emorg.findOrgById([orgid:y.orgid])
-				y.objid = org.OrgUnitId.toString()
-				y.name = org.Entity.Name
-				y.code = org.Entity.AcronymAbbreviation
+		if (o.type == 'ip'){
+			x.ratings = em.getSuccessIndicatorRatings([xxx:o.objid])
+			x.qualities = x.ratings.findAll{it.type=='Q'}
+			x.timeliness = x.ratings.findAll{it.type=='T'}
+			x.efficiency = x.ratings.findAll{it.type=='E'}
+		}
+		else
+		{
+			x.orgs = em.getSuccessIndicatorOrg([xxx:o.objid])
+			if(x.orgs){
+				x.orgs.each{ y ->
+					def org = emorg.findOrgById([orgid:y.orgid])
+					y.objid = org.OrgUnitId.toString()
+					y.name = org.Entity.Name
+					y.code = org.Entity.AcronymAbbreviation
+				}
 			}
 		}
+		println x
 		return x;
 	}
 
@@ -155,6 +224,8 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			p.type = p._tag;
 			if(!p.parentid) p.parentid = '%';
 		}
+
+
 	}
 	
 	public void afterList( def p, def list ) {
@@ -165,6 +236,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			it.filetype = 'sim-'+it.type;
 
 		}
+	
 
 	}
 	

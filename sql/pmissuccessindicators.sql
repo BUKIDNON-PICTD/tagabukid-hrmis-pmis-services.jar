@@ -187,3 +187,11 @@ WHERE (UPPER(Entity_Name) LIKE $P{searchtext}
 OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
 AND ParentOrgUnitId = $P{orgparentid}
 ORDER BY Entity_Name
+
+[getSuccessIndicatorRatings]
+SELECT * FROM pmis_ratings WHERE siid = $P{xxx}
+
+[deleteSuccessIndicatorRating]
+DELETE FROM pmis_ratings WHERE siid = $P{xxx}
+
+
