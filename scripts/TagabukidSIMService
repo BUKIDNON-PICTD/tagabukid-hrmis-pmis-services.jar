@@ -98,6 +98,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			it.state = 'DRAFT'
 			em.create(it, 'pmisrating')
 		}
+		
 
 		o.timeliness.each{
 			it.objid = 'TSI' + new java.rmi.server.UID(); 

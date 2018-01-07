@@ -9,6 +9,7 @@ public class TagabukidPMISLookupService
 	@Service('TagabukidSubayLookupUtilService')
 	def util 
 
+
 	// @ProxyMethod
 	// public def lookupDIN( params ) {
 	// 	return util.lookupDIN( 'dts:getDocumentbyDIN', params,'objid' )
@@ -24,6 +25,11 @@ public class TagabukidPMISLookupService
 	@ProxyMethod
 	public def lookupUserOrg( params ) {
 		return util.lookup( 'pmissuccessindicators:getUserOrg', params,'org_objid' )
+	}
+
+	@ProxyMethod
+	public def lookupProfile( params ) {
+		return util.lookupPostgreHrmis( 'pmissuccessindicators:getProfile', params,'PersonId' )
 	}
 
 

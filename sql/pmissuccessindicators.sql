@@ -194,4 +194,11 @@ SELECT * FROM pmis_ratings WHERE siid = $P{xxx}
 [deleteSuccessIndicatorRating]
 DELETE FROM pmis_ratings WHERE siid = $P{xxx}
 
+[getProfile]
+SELECT * FROM "hrmis"."tblProfile"
+WHERE UPPER("Name_LastName") LIKE $P{searchtext} 
+OR UPPER("Name_FirstName") LIKE $P{searchtext} 
+OR UPPER("Name_MiddleName") LIKE $P{searchtext} 
+ORDER BY "Name_LastName"
+
 
