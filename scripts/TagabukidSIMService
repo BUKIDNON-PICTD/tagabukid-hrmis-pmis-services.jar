@@ -32,16 +32,16 @@ class TagabukidSIMService extends ActiveCrudNodeService {
     }
 
     public void beforeCreate(o){
+    		def parent = em.findParent(o);
     	
-    	def parent = em.findParent(o);
-    	
-    	addChild(parent);
+	    	addChild(parent);
 
-    	o.lft = parent.lft + 1;
-		o.rgt = parent.lft + 2;
-		
-	
-	
+	    	o.lft = parent.lft + 1;
+			o.rgt = parent.lft + 2;
+
+			if(o.type=='pmis'){
+				o.title = o.code;
+			}
     }
 
     public void afterCreate(o){
@@ -144,6 +144,12 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			it.caption = it.code + " (" + it.title + ") ";
 			it.filetype = "sim-"+it.type;
 
+			if (it.type == 'root'){
+				it.children = [ 
+					[caption:'PMIS', filetype: 'sim-pmis'],
+				]
+			}
+
 			if (it.type == 'pmis'){
 				it.children = [ 
 					[caption:'MFO', filetype: 'sim-mfo'],
@@ -191,8 +197,6 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	}
 
 	public def open(o) {
-		println "TEST" *50
-		println o
 		def x = em.findInfo(o);
 		if (o.type == 'ip'){
 			x.ratings = em.getSuccessIndicatorRatings([xxx:o.objid])

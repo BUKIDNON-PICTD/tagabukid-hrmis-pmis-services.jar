@@ -2,13 +2,13 @@
 SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
 FROM pmis_successindicators AS node,
         pmis_successindicators AS parent
-WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND node.parentid IS NULL AND  node.type='pmis'
+WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND node.parentid IS NULL AND  node.type='root'
 GROUP BY node.title
 ORDER BY node.lft
 
 [getRootNodes1]
 SELECT a.* FROM pmis_successindicators a  WHERE 
-a.orgid IN ('ROOT',$P{orgid}) AND a.parentid IS NULL and a.type='pmis' ORDER BY a.code
+a.orgid IN ('ROOT',$P{orgid}) AND a.parentid IS NULL and a.type='root' ORDER BY a.code
 
 [getChildNodes]
 SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
@@ -20,7 +20,7 @@ ORDER BY node.lft
 
 [getChildNodes1]
 SELECT a.* FROM pmis_successindicators a WHERE 
-a.parentid=$P{objid} AND a.type='pmis' ORDER BY a.code
+a.parentid=$P{objid} AND a.type='root' ORDER BY a.code
 
 [getList]
 SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
@@ -186,6 +186,13 @@ SELECT * FROM subay_org_unit
 WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
 OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
 AND ParentOrgUnitId = $P{orgparentid}
+ORDER BY Entity_Name
+
+[getOrgUnitByParents]
+SELECT * FROM subay_org_unit
+WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
+OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
+${filter}
 ORDER BY Entity_Name
 
 [getSuccessIndicatorRatings]

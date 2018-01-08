@@ -18,9 +18,15 @@ public class TagabukidPMISLookupService
 	
 
 	@ProxyMethod
+	public def lookupOrgUnitByParents( params ) {
+		return util.lookup( 'pmissuccessindicators:getOrgUnitByParents', params,'OrgUnitId' )
+	}
+
+	@ProxyMethod
 	public def lookupOrgUnitByParent( params ) {
 		return util.lookup( 'pmissuccessindicators:getOrgUnitByParent', params,'OrgUnitId' )
 	}
+
 
 	@ProxyMethod
 	public def lookupUserOrg( params ) {
