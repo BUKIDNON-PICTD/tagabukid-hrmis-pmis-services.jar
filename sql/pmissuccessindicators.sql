@@ -1,7 +1,7 @@
 [getRootNodes]
 SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
 FROM pmis_successindicators AS node,
-        pmis_successindicators AS parent
+     pmis_successindicators AS parent
 WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND node.parentid IS NULL AND  node.type='root'
 GROUP BY node.title
 ORDER BY node.lft

@@ -1,0 +1,11 @@
+<schema adapter="tagabukid_hrmis">
+	 <element tablename="tblProfile">
+	 	
+	 	<field name="PersonId" primary="true"/>
+		<field name="Name_LastName" />
+		<field name="Name_FirstName"/>
+		<field name="Name_MiddleName"/>
+		
+	</element>
+</schema>
+
