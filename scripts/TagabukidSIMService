@@ -135,7 +135,9 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
 
 	public void afterNode( def selectedNode, def list ) {
-		
+		def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
+		//list.removeAll( list.findAll{it.orgid != orgid && it.orgid != 'ROOT'} );
+
 		list.each { 
 			it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
 			if(selectedNode.root == true) {
@@ -173,12 +175,11 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			
 		}
 
-		def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
 		
-		if (selectedNode.type == 'mfo'){
-			list = list.findAll{it.orgs.find{it.orgid == orgid}}
-			println list
-		}
+		// if (selectedNode.type == 'mfo'){
+		// 	list = list.findAll{it.orgs.find{it.orgid == orgid}}
+		// 	println list
+		// }
 
 	}
 
