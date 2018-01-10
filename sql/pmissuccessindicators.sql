@@ -181,6 +181,12 @@ DELETE FROM pmis_successindicators_org WHERE siid = $P{siid} AND orgid = $P{orgi
 [findOrgById]
 SELECT * FROM subay_org_unit WHERE OrgUnitId = $P{orgid}
 
+[getOrgUnit]
+SELECT * FROM subay_org_unit
+WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
+OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
+ORDER BY Entity_Name
+
 [getOrgUnitByParent]
 SELECT * FROM subay_org_unit
 WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
@@ -202,10 +208,12 @@ SELECT * FROM pmis_ratings WHERE siid = $P{xxx}
 DELETE FROM pmis_ratings WHERE siid = $P{xxx}
 
 [getProfile]
-SELECT * FROM "hrmis"."tblProfile"
-WHERE UPPER("Name_LastName") LIKE $P{searchtext} 
-OR UPPER("Name_FirstName") LIKE $P{searchtext} 
-OR UPPER("Name_MiddleName") LIKE $P{searchtext} 
-ORDER BY "Name_LastName"
+SELECT xx.*,oo.* FROM "hrmis"."tblProfile" xx
+INNER JOIN "hrmis"."tblEmploymentEmployeeRoster" xxx ON xxx."ProfileId" = xx."PersonId"
+INNER JOIN "references"."tblOrganizationUnit" oo ON oo."OrgUnitId" = xxx."OrganizationUnitId"
+WHERE UPPER(xx."Name_LastName") LIKE $P{searchtext} 
+OR UPPER(xx."Name_FirstName") LIKE $P{searchtext} 
+OR UPPER(xx."Name_MiddleName") LIKE $P{searchtext} 
+ORDER BY xx."Name_LastName"
 
 
