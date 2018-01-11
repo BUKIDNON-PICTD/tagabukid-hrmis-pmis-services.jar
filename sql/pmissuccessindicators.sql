@@ -216,4 +216,30 @@ OR UPPER(xx."Name_FirstName") LIKE $P{searchtext}
 OR UPPER(xx."Name_MiddleName") LIKE $P{searchtext} 
 ORDER BY xx."Name_LastName"
 
+[getSIByEmployeeOffice]
+SELECT 
+op.objid AS opid,
+op.title AS optitle,
+op.type AS optype,
+dp.objid AS dpid,
+dp.title AS dptitle,
+dp.type AS dptype,
+ip.objid AS ipid,
+ip.title AS iptitle,
+ip.type AS iptype,
+o.orgid,org.Entity_Name AS orgname
+FROM pmis_successindicators op
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND op.type = 'op';
 
+
+[getIPCRByDPCR]
+SELECT * FROM pmis_successindicators
+WHERE parentid = $P{dpid}
+
+[getSuccessIndicatorRating]
+SELECT * FROM pmis_ratings WHERE siid = $P{ipid} AND type = $P{type} ORDER BY rating

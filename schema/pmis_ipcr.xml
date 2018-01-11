@@ -1,15 +1,16 @@
 <schema adapter="tagabukid_hrmis">
 	 <element tablename="pmis_ipcr">
 		<field name="objid" primary="true" prefix="IP"/>                         
-		<field name="state" required="true" searchable="false" caption="State" visible="true"/>                         
+		<field name="period" required="true" searchable="false" caption="Period" visible="false"/>    
+		<field name="state" required="true" searchable="false" caption="State" visible="true"/>                      
 		<field name="ipcrno" required="true" searchable="true" caption="IPCR No." visible="true"/>                        
-		<field name="employeeid" required="true" searchable="false" visible="false"/>     
-		<field name="Name_LastName" required="true" searchable="true" caption="Last Name" visible="true"/>
-		<field name="Name_FirstName" required="true" searchable="true" caption="First Name" visible="true"/>
-		<field name="Name_MiddleName" required="true" searchable="true" caption="Middle Name" visible="true"/>
-		<field name="Name_NameExtension" required="false" searchable="false" caption="Name Ext" visible="true"/>
-		<field name="Name_PreNameTitle" required="false" searchable="false" visible="false"/>
-		<field name="Name_PostNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="employee_PersonId" required="true" searchable="false" visible="false"/>     
+		<field name="employee_Name_LastName" required="true" searchable="true" caption="Last Name" visible="true"/>
+		<field name="employee_Name_FirstName" required="true" searchable="true" caption="First Name" visible="true"/>
+		<field name="employee_Name_MiddleName" required="true" searchable="true" caption="Middle Name" visible="true"/>
+		<field name="employee_Name_NameExtension" required="false" searchable="false" caption="Name Ext" visible="true"/>
+		<field name="employee_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="employee_Name_PostNameTitle" required="false" searchable="false" visible="false"/>
 		<field name="orgid" required="true" searchable="false" visible="false"/> 
 		<field name="org_name" required="true" searchable="true" caption="Office" visible="true"/> 
 		<field name="org_code" required="false" searchable="false" visible="false"/> 

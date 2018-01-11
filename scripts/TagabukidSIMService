@@ -19,7 +19,33 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	@Service('TagabukidSubayTransactionService')
 	def dtsSvc 
 
+	@Service('DateService')
+	def dtSvc 
 
+	@Service("SequenceService")
+	def seqSvc;
+
+	@ProxyMethod
+	def initCreate(){
+		def entity = [:];
+		entity.employee = [:]
+        // entity.DPCR = [];
+        // entity.IPCR = [];
+        entity.state = 'DRAFT'
+        entity.org = [:]
+		entity.recordlog = [:]
+		entity.recordlog.datecreated = dtSvc.serverDate
+        entity.recordlog.createdbyuserid = env.USERID
+        entity.recordlog.createdbyuser = env.FULLNAME
+        entity.recordlog.dateoflastupdate =  dtSvc.serverDate
+        entity.recordlog.lastupdatedbyuserid = env.USERID
+        entity.recordlog.lastupdatedbyuser = env.FULLNAME
+        entity.items = []
+      
+        
+       
+        return entity;
+	}
     void addNode(parent){
     	em.changeNodeRight([myRight:parent.rgt]);
 		em.changeNodeLeft([myRight:parent.rgt]);
@@ -131,11 +157,10 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	}
 
 
-
-
-
 	public void afterNode( def selectedNode, def list ) {
-		
+		def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
+		//list.removeAll( list.findAll{it.orgid != orgid && it.orgid != 'ROOT'} );
+
 		list.each { 
 			it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
 			if(selectedNode.root == true) {
@@ -173,12 +198,11 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			
 		}
 
-		def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
 		
-		if (selectedNode.type == 'mfo'){
-			list = list.findAll{it.orgs.find{it.orgid == orgid}}
-			println list
-		}
+		// if (selectedNode.type == 'mfo'){
+		// 	list = list.findAll{it.orgs.find{it.orgid == orgid}}
+		// 	println list
+		// }
 
 	}
 
@@ -253,6 +277,26 @@ class TagabukidSIMService extends ActiveCrudNodeService {
   	@ProxyMethod
     public def saveSubAccount(o) {
     	return em.save( o );
+    }
+
+    @ProxyMethod
+    public def getSIByEmployeeOffice(o) {
+    	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.OrgUnitId] );
+    	dpcrlist.each{
+    		it.objid = 'DPCR' + new java.rmi.server.UID();
+    		it.ipcrlist = []
+    	}
+    	return dpcrlist;
+    }
+
+    @ProxyMethod
+    public def getIPCRNo(){
+		def appcode = "PMIS"
+		def yr      = dtSvc.serverYear;
+		def mnth    = dtSvc.serverMonth;
+		def smon    = ( mnth < 10 ) ? "0"+mnth : mnth+"";
+		def prefix  = appcode+yr+smon;
+		return prefix+seqSvc.getNextFormattedSeries(prefix);
     }
 
 	// @ProxyMethod

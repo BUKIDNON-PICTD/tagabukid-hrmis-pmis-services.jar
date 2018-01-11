@@ -15,7 +15,8 @@ public class TagabukidPMISLookupService
 	// 	return util.lookupDIN( 'dts:getDocumentbyDIN', params,'objid' )
 	// }
 
-	
+	@ActiveDB(value='pmissuccessindicators', em='tagabukid_hrmis')
+	def em;
 
 	@ProxyMethod
 	public def lookupOrgUnitByParents( params ) {
@@ -41,6 +42,37 @@ public class TagabukidPMISLookupService
 	@ProxyMethod
 	public def lookupProfile( params ) {
 		return util.lookupPostgreHrmis( 'pmissuccessindicators:getProfile', params,'PersonId' ) //lookup for employee
+	}
+
+	@ProxyMethod
+	public def lookupIPCR( params ) {
+		def ipcr = util.lookuphrmis( 'pmissuccessindicators:getIPCRByDPCR', params,'objid' )
+		return ipcr
+	}
+
+	@ProxyMethod
+	public def lookupRating( params ) {
+		// println params
+		def items = util.lookuphrmis( 'pmissuccessindicators:getSuccessIndicatorRating', params,'objid' )
+		// println items
+		// items.each{ ip->
+			
+		// 	def items = em.getSuccessIndicatorRating(ip);
+		// 	ip.qitems = [];
+		// 	ip.eitems = [];
+		// 	ip.titems = [];
+		// 	items.each{item->
+		// 		if (item.type=='Q'){
+		// 			ip.qitems << item;
+		// 		}else if (item.type=='T'){
+		// 			ip.titems << item;
+		// 		}else{
+		// 			ip.eitems << item;
+		// 		}
+		// 	}
+		// }
+		// println ipcr
+		return items
 	}
 
 
