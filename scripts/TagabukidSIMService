@@ -25,6 +25,9 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	@Service("SequenceService")
 	def seqSvc;
 
+	@ActiveDB(value='pmissuccessindicators', em='postgrehrmis')
+	def emposthrmis
+
 	@ProxyMethod
 	def initCreate(){
 		def entity = [:];
@@ -289,6 +292,29 @@ class TagabukidSIMService extends ActiveCrudNodeService {
     	return dpcrlist;
     }
 
+     @ProxyMethod
+    public def getSIByIPCRId(o) {
+    	def dpcrlist = em.getSIByIPCRId( [ipcrid:o] );
+    	def test = []
+    	// println dpcrlist.groupBy{it.dpid}
+    	dpcrlist.each{
+    		
+    	}
+    	// def test = dpcrlist.collect{
+    	// 	[
+    	// 	 dpid:it.dpid,
+    	// 	 dptitle:it.dptitle,
+    	// 	 ipcrlist:[]
+    	// 	]
+    	// }.groupBy{it.dpid}
+    	println test
+    	// dpcrlist.each{
+    	// 	it.objid = 'DPCR' + new java.rmi.server.UID();
+    	// 	it.ipcrlist = []
+    	// }
+    	return dpcrlist;
+    }
+
     @ProxyMethod
     public def getIPCRNo(){
 		def appcode = "PMIS"
@@ -298,6 +324,23 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 		def prefix  = appcode+yr+smon;
 		return prefix+seqSvc.getNextFormattedSeries(prefix);
     }
+
+    @ProxyMethod
+    public def findProfileById(o){
+		return emposthrmis.findProfileById([ProfileId:"'"+o+"'"])
+    }
+
+    @ProxyMethod
+    public def findOrgById(o){
+		return emorg.findOrgById([orgid:o])
+    }
+
+  //   @ProxyMethod
+  //   public def getDPCRList(o){
+		// return emorg.findOrgById([orgid:o])
+  //   }
+
+
 
 	// @ProxyMethod
  //    public def changeParent(o) {
