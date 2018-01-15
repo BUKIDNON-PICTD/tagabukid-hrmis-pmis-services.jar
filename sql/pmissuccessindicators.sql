@@ -216,17 +216,20 @@ OR UPPER(xx."Name_FirstName") LIKE $P{searchtext}
 OR UPPER(xx."Name_MiddleName") LIKE $P{searchtext} 
 ORDER BY xx."Name_LastName"
 
+[findProfileById]
+SELECT xx.*,oo.* FROM "hrmis"."tblProfile" xx
+INNER JOIN "hrmis"."tblEmploymentEmployeeRoster" xxx ON xxx."ProfileId" = xx."PersonId"
+INNER JOIN "references"."tblOrganizationUnit" oo ON oo."OrgUnitId" = xxx."OrganizationUnitId"
+WHERE xxx."ProfileId" = ${ProfileId}
+
 [getSIByEmployeeOffice]
-SELECT 
+SELECT DISTINCT
 op.objid AS opid,
 op.title AS optitle,
 op.type AS optype,
 dp.objid AS dpid,
 dp.title AS dptitle,
 dp.type AS dptype,
-ip.objid AS ipid,
-ip.title AS iptitle,
-ip.type AS iptype,
 o.orgid,org.Entity_Name AS orgname
 FROM pmis_successindicators op
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
@@ -236,6 +239,34 @@ INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
 WHERE o.orgid = $P{orgid}
 AND op.type = 'op';
 
+[getSIByIPCRId]
+SELECT op.objid AS opid,
+  op.title AS optitle,
+  op.type AS optype,
+  dp.objid AS dpid,
+  dp.title AS dptitle,
+  dp.type AS dptype,
+  ip.objid AS successindicator_objid,
+  ip.title AS successindicator_title,
+  ip.type AS successindicator_type,
+  prq.objid AS q_objid,
+  prq.title AS q_title,
+  prq.rating AS q_rating,
+  prt.objid AS t_objid,
+  prt.title AS t_title,
+  prt.rating AS t_rating,
+  pre.objid AS e_objid,
+  pre.title AS e_title,
+  pre.rating AS e_rating
+FROM pmis_successindicators op
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_ipcr_details id ON id.successindicatorid = ip.objid
+INNER JOIN pmis_ratings prq ON prq.objid = id.qid
+INNER JOIN pmis_ratings prt ON prt.objid = id.tid
+INNER JOIN pmis_ratings pre ON pre.objid = id.eid
+WHERE op.type = 'op'
+AND id.ipcrid = $P{ipcrid}
 
 [getIPCRByDPCR]
 SELECT * FROM pmis_successindicators
