@@ -161,7 +161,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
 
 	public void afterNode( def selectedNode, def list ) {
-		def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
+		// def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
 		//list.removeAll( list.findAll{it.orgid != orgid && it.orgid != 'ROOT'} );
 
 		list.each { 
