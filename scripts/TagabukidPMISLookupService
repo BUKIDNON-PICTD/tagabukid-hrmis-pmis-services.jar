@@ -20,7 +20,7 @@ public class TagabukidPMISLookupService
 
 	@ProxyMethod
 	public def lookupOrgUnitByParents( params ) {
-		return util.lookup( 'pmissuccessindicators:getOrgUnitByParents', params,'OrgUnitId' )
+		return util.lookup( 'pmissuccessindicators:getOrgUnitByParents', params,'OrgUnitId' ) //to sort office ID
 	}
 
 	@ProxyMethod
@@ -30,18 +30,19 @@ public class TagabukidPMISLookupService
 
 	@ProxyMethod
 	public def lookupOrgUnit( params ) {
-		return util.lookup( 'pmissuccessindicators:getOrgUnit', params,'OrgUnitId' )
+	println params
+		return util.lookup( 'pmissuccessindicators:getOrgUnit', params,'OrgUnitId' ) //lookup for all offices
 	}
 
 
 	@ProxyMethod
 	public def lookupUserOrg( params ) {
-		return util.lookup( 'pmissuccessindicators:getUserOrg', params,'org_objid' )
+		return util.lookup( 'pmissuccessindicators:getUserOrg', params,'org_objid' )		//lookup for sorted office
 	}
 
 	@ProxyMethod
 	public def lookupProfile( params ) {
-		return util.lookupPostgreHrmis( 'pmissuccessindicators:getProfile', params,'PersonId' )
+		return util.lookupPostgreHrmis( 'pmissuccessindicators:getProfile', params,'PersonId' ) //lookup for employee
 	}
 
 	@ProxyMethod

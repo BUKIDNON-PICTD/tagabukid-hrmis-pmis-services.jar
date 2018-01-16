@@ -4,12 +4,12 @@
 		<field name="code" requied="true"/>	
 		<field name="name" requied="true"/>	
 		<field name="description" requied="false"/>	
-		<field name="recordlog_datecreated" requied="true"/>	
-		<field name="recordlog_createdbyuserid" requied="true"/>	
-		<field name="recordlog_createdbyuser" requied="true"/>	
-		<field name="recordlog_dateoflastupdate" requied="true"/>	
-		<field name="recordlog_lastupdatedbyuserid" requied="true"/>	
-		<field name="recordlog_lastupdatedbyuser" requied="true"/>	
+		<field name="recordlog_datecreated" requied="false"/>	
+		<field name="recordlog_createdbyuserid" requied="false"/>	
+		<field name="recordlog_createdbyuser" requied="false"/>	
+		<field name="recordlog_dateoflastupdate" requied="false"/>	
+		<field name="recordlog_lastupdatedbyuserid" requied="false"/>	
+		<field name="recordlog_lastupdatedbyuser" requied="false"/>	
 	</element>
 
 </schema>
