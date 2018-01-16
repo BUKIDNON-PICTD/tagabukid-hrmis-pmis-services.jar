@@ -2,12 +2,13 @@ import com.rameses.annotations.*;
 import com.rameses.util.*;
 import java.rmi.server.*;
 import com.rameses.common.*
+
 import com.rameses.services.extended.*
 
 class TagabukidBehavioralService extends ActiveCrudNodeService
 {
 
-	@ActiveDB(value='behavrioralentity', em='hrmis')
+	@ActiveDB(value='pmissuccessindicators', em='hrmis')
 	def em
 
 	// @ActiveDB(value='subaydocumenttype', em='postgrereferences')
@@ -33,8 +34,35 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
             [name:"successindicator", caption:"Description", width:100],
             [name:"type", caption:"Type", width:100],
             [name:"state", caption:"State", width:100],
-             [name:"remarks", caption:"remarks", width:100],
+            [name:"remarks", caption:"remarks", width:100],
 		]	
+		return cols;
+	}
+
+	@ProxyMethod
+	def initCreate(){
+		
+		def entity = [:];
+		entity.objid = 'b' + new java.rmi.server.UID();
+		entity.state = 'DRAFT'
+		//entity.employee = [:]
+        // entity.DPCR = [];
+        // entity.IPCR = [];
+        entity.state = 'DRAFT'
+        //entity.org = [:]
+		//entity.recordlog = [:]
+		//entity.recordlog.datecreated = dtSvc.serverDate
+        //entity.recordlog.createdbyuserid = env.USERID
+       	//entity.recordlog.createdbyuser = env.FULLNAME
+        //entity.recordlog.dateoflastupdate =  dtSvc.serverDate
+        //entity.recordlog.lastupdatedbyuserid = env.USERID
+        //entity.recordlog.lastupdatedbyuser = env.FULLNAME
+       	 entity.items = []
+      
+        
+       
+        return entity;
+
 	}
 
 
@@ -69,6 +97,8 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 			save(it)
 		}
 	}
+
+
 
 	// void afterCreate(o){
 	// 	saveitems(o);
@@ -109,14 +139,12 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 	// 	em.deleteAllDocumentTypeOrg(o);
 	// }
 
-	//void beforeCreate(o){
-		//o.recordlog_datecreated = dtSvc.serverDate
-		//o.recordlog_createdbyuserid = env.USERID
-		//o.recordlog_createdbyuser = env.FULLNAME
-		//o.recordlog_dateoflastupdate =  dtSvc.serverDate
-		//o.recordlog_lastupdatedbyuserid = env.USERID
-		//o.recordlog_lastupdatedbyuser = env.FULLNAME
-	//}
+	void beforeCreate(o){
+			
+			it.objid = 'b' + new java.rmi.server.UID();
+			it.state = 'DRAFT'
+		
+	}
 
 	// public void afterOpen(o){
 	// 	o.org = em.getDocumentTypeOrg([objid:o.objid])

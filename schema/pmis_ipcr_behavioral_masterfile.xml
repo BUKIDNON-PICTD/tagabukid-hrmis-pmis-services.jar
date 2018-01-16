@@ -1,0 +1,13 @@
+<schema adapter="tagabukid_hrmis">
+	<element tablename="pmis_ipcr_behavioral_masterfile">
+		<field name = "objid" primary="true" caption = "objid" visible = "false"/>
+		<field name = "sortorder" required="true" caption = "order" visible = "true" />
+		<field name = "type" required="true" caption = "Type" visible = "true" />
+		<field name = "behavior" required="true" caption = "Behavior" visible = "true"  />
+		<field name = "definition" required="true" caption = "Definition" visible = "true"  />
+		<field name = "successindicator" required="true" caption= "Success Indicattor" visible = "true" />
+		<field name = "remarks" required="false" caption = "Remarks" visible = "true"   />
+	</element>
+
+</schema>
+
