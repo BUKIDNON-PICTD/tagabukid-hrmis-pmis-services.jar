@@ -273,4 +273,11 @@ SELECT * FROM pmis_successindicators
 WHERE parentid = $P{dpid}
 
 [getSuccessIndicatorRating]
-SELECT * FROM pmis_ratings WHERE siid = $P{ipid} AND type = $P{type} ORDER BY rating
+SELECT * FROM pmis_ratings 
+WHERE siid = $P{ipid} AND type = $P{type} 
+ORDER BY rating
+
+[getBehavioral]
+SELECT * FROM pmis_ipcr_behavioral_masterfile 
+WHERE type = $P{type}
+ORDER by sortorder

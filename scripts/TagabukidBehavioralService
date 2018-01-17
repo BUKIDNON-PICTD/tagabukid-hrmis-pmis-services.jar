@@ -8,7 +8,7 @@ import com.rameses.services.extended.*
 class TagabukidBehavioralService extends ActiveCrudNodeService
 {
 
-	@ActiveDB(value='pmissuccessindicators', em='hrmis')
+	@ActiveDB(value='pmis_ipcr_behavioral_masterfile', em='tagabukid_hrmis')
 	def em
 
 	// @ActiveDB(value='subaydocumenttype', em='postgrereferences')
@@ -139,6 +139,9 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 	// 	em.deleteAllDocumentTypeOrg(o);
 	// }
 
+
+
+
 	void beforeCreate(o){
 			
 			it.objid = 'b' + new java.rmi.server.UID();
@@ -146,7 +149,9 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 		
 	}
 
-	// public void afterOpen(o){
+
+
+
 	// 	o.org = em.getDocumentTypeOrg([objid:o.objid])
 	// 	if(o.org ){
 	// 		//def org = empostref.getOrg([orgid:"('" + entity.organizationid.join("','") + "')"])
@@ -158,7 +163,7 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 	// 			y.code = org.Entity.AcronymAbbreviation
 	// 		}
 	// 	}
-	// }
+		}
 
 	// public def getMonthFirstDate( dt ) {
  //        Calendar cal = Calendar.getInstance();
@@ -167,7 +172,4 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
  //        return dtSvc.format('yyyy-MM-dd', cal.getTime()) + " 00:00:00";
  //    }
 
- 
 
-
-}

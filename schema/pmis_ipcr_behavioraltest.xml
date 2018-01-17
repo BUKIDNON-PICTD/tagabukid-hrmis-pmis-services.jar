@@ -1,0 +1,12 @@
+<schema adapter="tagabukid_hrmis">
+	<element tablename="pmis_ipcr_behavioral">
+		<field name = "objid" primary="true" caption = "objid" visible = "false"	 />
+		<field name = "ipcrid" required="true" caption = "ipcrid" visible = "false"  />
+		<field name = "type" required="true" caption = "Type" visible = "true" />
+		<field name = "remarksandcomments" required="false" caption = "Remarks" visible = "true"   />
+		
+	</element>
+
+</schema>
+
+

@@ -43,6 +43,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
         entity.recordlog.dateoflastupdate =  dtSvc.serverDate
         entity.recordlog.lastupdatedbyuserid = env.USERID
         entity.recordlog.lastupdatedbyuser = env.FULLNAME
+        
         entity.items = []
       
         
@@ -145,6 +146,28 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 		}
 	
 	}
+
+
+		void saveitembehavioral(o){
+						// one to many
+		
+		o.behavioralrating.each{
+			it.objid = 'BR' + new java.rmi.server.UID();
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'behavioralrating')
+		}
+		
+
+		o.timeliness.each{
+			it.objid = 'TSI' + new java.rmi.server.UID(); 
+			it.type = 'T'
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'pmisrating')
+		}
+	}
+
 
 	void updateitemsipcr(o){
 		o.qualities.each{
