@@ -148,25 +148,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	}
 
 
-		void saveitembehavioral(o){
-						// one to many
-		
-		o.behavioralrating.each{
-			it.objid = 'BR' + new java.rmi.server.UID();
-			it.siid = o.objid
-			it.state = 'DRAFT'
-			em.create(it, 'behavioralrating')
-		}
-		
 
-		o.timeliness.each{
-			it.objid = 'TSI' + new java.rmi.server.UID(); 
-			it.type = 'T'
-			it.siid = o.objid
-			it.state = 'DRAFT'
-			em.create(it, 'pmisrating')
-		}
-	}
 
 
 	void updateitemsipcr(o){
@@ -294,6 +276,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	
 
 	}
+
 	
     @ProxyMethod
     public def getSubAccounts(o) {
@@ -305,6 +288,8 @@ class TagabukidSIMService extends ActiveCrudNodeService {
     	return em.save( o );
     }
 
+ 
+
     @ProxyMethod
     public def getSIByEmployeeOffice(o) {
     	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.OrgUnitId] );
@@ -314,6 +299,16 @@ class TagabukidSIMService extends ActiveCrudNodeService {
     	}
     	return dpcrlist;
     }
+
+    @ProxyMethod
+    public def getBehavioral(o){
+    	def behaviorallist = em.getBehavioral ( [ipcrid:o.ipcrid]);
+    	behaviorallist.each{
+    		it.objid = 'BRT' + new java.rmi.server.UID();
+    		it.behaviorallist = []
+    		}
+    		return behaviorallist;
+    	}
 
      @ProxyMethod
     public def getSIByIPCRId(o) {

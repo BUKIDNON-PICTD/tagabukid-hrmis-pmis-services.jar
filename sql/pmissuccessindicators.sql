@@ -280,4 +280,4 @@ ORDER BY rating
 [getBehavioral]
 SELECT * FROM pmis_ipcr_behavioral_masterfile 
 WHERE type = $P{type}
-ORDER by sortorder
+ORDER BY sortorder

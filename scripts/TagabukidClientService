@@ -5,7 +5,7 @@ import com.rameses.common.*
 
 import com.rameses.services.extended.*
 
-class TagabukidBehavioralService extends ActiveCrudNodeService
+class TagabukidClientService extends ActiveCrudNodeService
 {
 
 	@ActiveDB(value='pmissuccessindicator', em='tagabukid_hrmis')
@@ -29,9 +29,8 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 	@ProxyMethod
 	public def getColumns( params ) {
 		return [
-			[name:"behavior", caption:"Behavior", width:40],
+			[name:"factor", caption:"Factor", width:40],
             [name:"definition", caption:"definition", width:250],
-            [name:"successindicator", caption:"Description", width:100],
             [name:"type", caption:"Type", width:100],
             [name:"state", caption:"State", width:100],
             [name:"remarks", caption:"remarks", width:100],
@@ -43,17 +42,10 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 	def initCreate(){
 		
 		def entity = [:];
-		entity.objid = 'b' + new java.rmi.server.UID();
+		entity.objid = 'c' + new java.rmi.server.UID();
 		entity.state = 'DRAFT';
-        //entity.org = [:]
-		//entity.recordlog = [:]
-		//entity.recordlog.datecreated = dtSvc.serverDate
-        //entity.recordlog.createdbyuserid = env.USERID
-       	//entity.recordlog.createdbyuser = env.FULLNAME
-        //entity.recordlog.dateoflastupdate =  dtSvc.serverDate
-        //entity.recordlog.lastupdatedbyuserid = env.USERID
-        //entity.recordlog.lastupdatedbyuser = env.FULLNAME
-       	 entity.items = []
+		entity.type = 'CLIENT';
+       	entity.items = []
       
         
        
