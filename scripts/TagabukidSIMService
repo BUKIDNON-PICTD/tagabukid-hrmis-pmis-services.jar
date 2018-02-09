@@ -32,6 +32,8 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	def initCreate(){
 		def entity = [:];
 		entity.employee = [:]
+		entity.dpcrlist = [];
+		entity.behavioraltypelist = [];
         // entity.DPCR = [];
         // entity.IPCR = [];
         entity.state = 'DRAFT'
@@ -44,7 +46,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
         entity.recordlog.lastupdatedbyuserid = env.USERID
         entity.recordlog.lastupdatedbyuser = env.FULLNAME
         
-        entity.items = []
+        entity.ipcritems = []
       
         
        
@@ -248,7 +250,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 				}
 			}
 		}
-		println x
+		// println x
 		return x;
 	}
 
@@ -310,6 +312,12 @@ class TagabukidSIMService extends ActiveCrudNodeService {
     		return behaviorallist;
     	}
 
+
+    @ProxyMethod
+    public def getBahavioralRating(o){
+		return em.getBehavioral ( [type:o]);
+	}
+
      @ProxyMethod
     public def getSIByIPCRId(o) {
     	def dpcrlist = em.getSIByIPCRId( [ipcrid:o] );
@@ -325,7 +333,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
     	// 	 ipcrlist:[]
     	// 	]
     	// }.groupBy{it.dpid}
-    	println test
+    	// println test
     	// dpcrlist.each{
     	// 	it.objid = 'DPCR' + new java.rmi.server.UID();
     	// 	it.ipcrlist = []

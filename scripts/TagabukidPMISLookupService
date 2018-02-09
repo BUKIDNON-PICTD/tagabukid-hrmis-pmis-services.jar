@@ -76,5 +76,10 @@ public class TagabukidPMISLookupService
 		return items
 	}
 
+	@ProxyMethod
+	public def lookupBehavior( params ) {
+		return util.lookuphrmis( 'pmissuccessindicators:getBehavioral', params,'objid' )
+	}
+
 
 }

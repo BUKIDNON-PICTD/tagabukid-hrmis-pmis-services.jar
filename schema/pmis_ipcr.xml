@@ -16,34 +16,38 @@
 		<field name="org_code" required="false" searchable="false" visible="false"/> 
 		<field name="dtfiled" required="true" searchable="true" caption="Date Filed" visible="true"/>                       
 		<field name="reviewerid" required="true" searchable="false" visible="false"/> 
-		<field name="reviewer_Name_LastName" required="true" searchable="true" visible="falses"/>
-		<field name="reviewer_Name_FirstName" required="true" searchable="true" visible="falses"/>
-		<field name="reviewer_Name_MiddleName" required="true" searchable="true" visible="falses"/>
-		<field name="reviewer_Name_NameExtension" required="false" searchable="false" visible="falses"/>
-		<field name="reviewer_Name_PreNameTitle" required="false" searchable="false" visible="ffalses"/>
-		<field name="reviewer_Name_PostNameTitle" required="false" searchable="false" visible="ffalses"/>                   
+		<field name="reviewer_Name_LastName" required="true" searchable="true" visible="false"/>
+		<field name="reviewer_Name_FirstName" required="true" searchable="true" visible="false"/>
+		<field name="reviewer_Name_MiddleName" required="true" searchable="true" visible="false"/>
+		<field name="reviewer_Name_NameExtension" required="false" searchable="false" visible="false"/>
+		<field name="reviewer_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="reviewer_Name_PostNameTitle" required="false" searchable="false" visible="false"/>                   
 		<field name="supervisorid" required="true" searchable="false" visible="false"/>       
-		<field name="supervisor_Name_LastName" required="true" searchable="true" visible="falses"/>
-		<field name="supervisor_Name_FirstName" required="true" searchable="true" visible="falses"/>
-		<field name="supervisor_Name_MiddleName" required="true" searchable="true" visible="falses"/>
-		<field name="supervisor_Name_NameExtension" required="false" searchable="false" visible="falses"/>
-		<field name="supervisor_Name_PreNameTitle" required="false" searchable="false" visible="ffalses"/>
-		<field name="supervisor_Name_PostNameTitle" required="false" searchable="false" visible="ffalses"/>            
+		<field name="supervisor_Name_LastName" required="true" searchable="true" visible="false"/>
+		<field name="supervisor_Name_FirstName" required="true" searchable="true" visible="false"/>
+		<field name="supervisor_Name_MiddleName" required="true" searchable="true" visible="false"/>
+		<field name="supervisor_Name_NameExtension" required="false" searchable="false" visible="false"/>
+		<field name="supervisor_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="supervisor_Name_PostNameTitle" required="false" searchable="false" visible="false"/>            
 		<field name="approverid" required="true" searchable="false" visible="false"/>      
-		<field name="approver_Name_LastName" required="true" searchable="true" visible="falses"/>
-		<field name="approver_Name_FirstName" required="true" searchable="true" visible="falses"/>
-		<field name="approver_Name_MiddleName" required="true" searchable="true" visible="falses"/>
-		<field name="approver_Name_NameExtension" required="false" searchable="false" visible="falses"/>
-		<field name="approver_Name_PreNameTitle" required="false" searchable="false" visible="ffalses"/>
-		<field name="approver_Name_PostNameTitle" required="false" searchable="false" visible="ffalses"/>               
-		<field name="recordlog_datecreated" required="true" searchable="false" caption="Date Created" visible="true"/>         
+		<field name="approver_Name_LastName" required="true" searchable="true" visible="false"/>
+		<field name="approver_Name_FirstName" required="true" searchable="true" visible="false"/>
+		<field name="approver_Name_MiddleName" required="true" searchable="true" visible="false"/>
+		<field name="approver_Name_NameExtension" required="false" searchable="false" visible="false"/>
+		<field name="approver_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="approver_Name_PostNameTitle" required="false" searchable="false" visible="false"/>
+
+		<field name="recordlog_datecreated" required="true" searchable="false" caption="Date Created" visible="true"/>
 		<field name="recordlog_createdbyuserid" required="true" searchable="false" visible="false"/>     
 		<field name="recordlog_createdbyuser" required="true" searchable="false" visible="false"/>       
 		<field name="recordlog_dateoflastupdate" required="true" searchable="false" visible="false"/>    
 		<field name="recordlog_lastupdatedbyuserid" required="true" searchable="false" visible="false"/> 
 		<field name="recordlog_lastupdatedbyuser" required="true" searchable="false" visible="false"/>   
 
-		<complex name="items" ref="pmis_ipcr_details" jointype="one-to-many">
+		<complex name="ipcritems" ref="pmis_ipcr_items" jointype="one-to-many">
+			<key field="objid" target="ipcrid" /> 		
+		</complex>
+		<complex name="behavioraltypelist" ref="pmis_ipcr_behavioral" jointype="one-to-many">
 			<key field="objid" target="ipcrid" /> 		
 		</complex>
 	</element>
