@@ -1,6 +1,6 @@
 <schema adapter="tagabukid_hrmis">
 	 <element tablename="pmis_ipcr_behavioral">
-		<field name="objid" primary="true" /> 
+		<field name="objid" primary="true" prefix="IPB"/> 
 		<field name="ipcrid" required="true" /> 
 		<field name="type" required="true" /> 
 		<field name="remarks" /> 
