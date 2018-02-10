@@ -286,3 +286,35 @@ ORDER BY rating
 SELECT * FROM pmis_ipcr_behavioral_masterfile 
 WHERE type = $P{type}
 ORDER BY sortorder
+
+[getIPCRIndividual]
+SELECT ipcr.*,
+mfo.`objid` AS mfoobjid,
+mfo.`title` AS mfo,
+op.`objid` AS opobjid,
+op.`title` AS opcr,
+dp.`objid` AS dpobjid,
+dp.`title` AS dpcr,
+ip.`objid` AS ipobjid,
+ip.`title` AS ipcr,
+rq.`objid` AS rqobjid,
+rq.`title` AS rqtitle,
+rq.`rating` AS rqrating,
+re.`objid` AS reobjid,
+re.`title` AS retitle,
+re.`rating` AS rerating,
+rt.`objid` AS rtobjid,
+rt.`title` AS rttitle,
+rt.`rating` AS rtrating
+FROM `pmis_ipcr` ipcr
+INNER JOIN pmis_ipcr_items ipitem ON ipitem.`ipcrid` = ipcr.`objid`
+INNER JOIN pmis_successindicators ip ON ip.`objid` = ipitem.`successindicatorid`
+INNER JOIN pmis_successindicators dp ON dp.`objid` = ip.`parentid`
+INNER JOIN pmis_successindicators op ON op.`objid` = dp.`parentid`
+INNER JOIN pmis_successindicators mfo ON mfo.`objid` = op.`parentid`
+LEFT JOIN pmis_ratings rq ON rq.`objid` = ipitem.`qid`
+LEFT JOIN pmis_ratings re ON re.`objid` = ipitem.`eid`
+LEFT JOIN pmis_ratings rt ON rt.`objid` = ipitem.`tid`
+WHERE ipcr.employee_PersonId = $P{PersonId}
+AND ipcr.period = $P{period}
+AND ipcr.year = $P{year}

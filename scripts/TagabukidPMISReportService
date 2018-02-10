@@ -47,6 +47,7 @@ class TagabukidPMISReportService
 
 	@ProxyMethod
 	public def getIPCRByEmployee(params){
+		
 
 		params.filter = ''' AND ug.org_objid LIKE $P{orgid} AND dtyp.objid LIKE $P{dtypid} AND d.recordlog_createdbyuserid LIKE $P{userid}  '''
 		if(params.period == "1st"){
@@ -57,13 +58,14 @@ class TagabukidPMISReportService
 			params.strperiod = "JULY - DECEMBER " + params.year
 		}
 		
-		def items = em.getIPCRIndividual(params);
+		def items = em.getIPCRIndividual([year:params.year,period:params.period,PersonId:params.employee.PersonId.toString()]);
 		def data = [:]
-
+		println "TEST"*50
+		println items
 		data.reportdata = items;
 
 		data.parameters = [
-				TITLE  :buildTitle(params) + "Individual Performance Commitment and Review (IPCR)",
+				TITLE  :"Individual Performance Commitment and Review (IPCR)",
 				PERIOD :params.strperiod,
 				OFFICE :params.org,
 
@@ -75,13 +77,17 @@ class TagabukidPMISReportService
 	}
 
 
-
-
 	@ProxyMethod
-	public def getOrgOffice(){
-		return emorg.getOrgUnit([searchtext:'%'])
+	public def getEmployee(){
+		return emorg.getEmployee([searchtext:'%'])
 
 	}
+
+	// @ProxyMethod
+	// public def getOffice(){
+	// 	return emorg.getOrgUnit([searchtext:'%'])
+
+	// }
 
 
 
