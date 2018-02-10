@@ -314,7 +314,11 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
     @ProxyMethod
     public def getBahavioralRating(o){
-		return em.getBehavioral ( [type:o]);
+		return em.getBehavioral ( [type:o]).each{
+			it.behavioralid = it.objid
+			it.objid = 'BRT' + new java.rmi.server.UID();
+
+		};
 	}
 
      @ProxyMethod

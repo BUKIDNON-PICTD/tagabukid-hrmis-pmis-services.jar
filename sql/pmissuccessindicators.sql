@@ -237,7 +237,8 @@ INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
 INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
 WHERE o.orgid = $P{orgid}
-AND op.type = 'op';
+AND op.type = 'op'
+ORDER BY dp.code
 
 [getSIByIPCRId]
 SELECT op.objid AS opid,
@@ -267,14 +268,18 @@ INNER JOIN pmis_ratings prt ON prt.objid = id.tid
 INNER JOIN pmis_ratings pre ON pre.objid = id.eid
 WHERE op.type = 'op'
 AND id.ipcrid = $P{ipcrid}
+ORDER BY dp.code
 
 [getIPCRByDPCR]
 SELECT * FROM pmis_successindicators
-WHERE parentid = $P{dpid}
+WHERE title LIKE  $P{searchtext}
+AND parentid = $P{dpid}
 
 [getSuccessIndicatorRating]
 SELECT * FROM pmis_ratings 
-WHERE siid = $P{ipid} AND type = $P{type} 
+WHERE (title LIKE $P{searchtext}
+OR rating LIKE $P{searchtext})
+AND siid = $P{ipid} AND type = $P{type} 
 ORDER BY rating
 
 [getBehavioral]
