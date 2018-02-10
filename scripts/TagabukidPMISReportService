@@ -6,6 +6,10 @@ class TagabukidPMISReportService
 {
 	@ActiveDB(value='pmissuccessindicators', em='tagabukid_hrmis')
 	def em
+
+
+	@ActiveDB(value='pmissuccessindicators', em='tagabukid_subay')
+	def emorg;
     
 	@Service('DateService')
 	def dtSvc 
@@ -37,7 +41,49 @@ class TagabukidPMISReportService
 
 		]
 		return data
+
+
 	}
+
+	@ProxyMethod
+	public def getIPCRByEmployee(params){
+
+		params.filter = ''' AND ug.org_objid LIKE $P{orgid} AND dtyp.objid LIKE $P{dtypid} AND d.recordlog_createdbyuserid LIKE $P{userid}  '''
+		if(params.period == "1st"){
+			params.strperiod = "JANUARY - JUNE " + params.year
+
+		}
+		else {
+			params.strperiod = "JULY - DECEMBER " + params.year
+		}
+		
+		def items = em.getIPCRIndividual(params);
+		def data = [:]
+
+		data.reportdata = items;
+
+		data.parameters = [
+				TITLE  :buildTitle(params) + "Individual Performance Commitment and Review (IPCR)",
+				PERIOD :params.strperiod,
+				OFFICE :params.org,
+
+			
+
+			]
+		return data
+
+	}
+
+
+
+
+	@ProxyMethod
+	public def getOrgOffice(){
+		return emorg.getOrgUnit([searchtext:'%'])
+
+	}
+
+
 
 	// @ProxyMethod
 	// public def getListOfDocuments( params ) {
