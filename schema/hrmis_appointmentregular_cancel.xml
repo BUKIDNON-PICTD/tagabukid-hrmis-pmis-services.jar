@@ -1,0 +1,16 @@
+<schema adapter="tagabukid_hrmis">
+	<element tablename="hrmis_appointmentregular_cancel">
+		<field name="objid" primary="true" prefix="ARC" visible="false" searchable="false"/>
+		<field name="appointmentid" required="true" visible="false" searchable="false"/>
+		<field name="datecanceled" required="true" visible="false" searchable="false"/>
+		<field name="reason" required="true" visible="false" searchable="false"/>
+		<field name="canceltype" required="true" visible="false" searchable="false"/>
+		<field name="recordlog_datecreated" required="true" visible="false" searchable="false"/>
+		<field name="recordlog_createdbyuserid" required="true" visible="false" searchable="false"/>
+		<field name="recordlog_createdbyuser" required="true" visible="false" searchable="false"/>
+		<field name="recordlog_dateupdated" required="true" visible="false" searchable="false"/>
+		<field name="recordlog_lastupdatedbyuserid" required="true" visible="false" searchable="false"/>
+		<field name="recordlog_lastupdatedbyuser" required="true" visible="false" searchable="false"/>
+	</element>
+</schema>
+
