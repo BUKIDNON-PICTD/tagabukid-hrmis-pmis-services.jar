@@ -1,0 +1,10 @@
+<schema adapter="tagabukid_hrmis">
+	<element tablename="hrmis_appointmentjoborder_signatory">
+		<field name="objid" primary="true" prefix="AJS" searchable="false" />
+		<field name="appointmentid" required="true" visible="false" searchable="false" />
+		<field name="signatoryname" required="true" visible="false" searchable="false" />
+		<field name="signatorytitle" required="true" visible="false" searchable="false" />
+		<field name="dtsigned" required="true" visible="false" searchable="false" />
+		<field name="remarks" required="true" visible="false" searchable="false" />
+	</element>
+</schema>
