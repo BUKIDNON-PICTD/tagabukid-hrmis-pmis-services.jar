@@ -5,6 +5,7 @@
 		<field name="signatoryname" required="true" visible="false" searchable="false" />
 		<field name="signatorytitle" required="true" visible="false" searchable="false" />
 		<field name="signatoryheading" required="true" visible="false" searchable="false" />
-		<field name= "remarks" required="true" visible="false" searchable="false"/>
+		<field name= "remarks" visible="false" searchable="false"/>
+		<field name= "level" required="true" visible="false" searchable="false"/>
 	</element>
 </schema>

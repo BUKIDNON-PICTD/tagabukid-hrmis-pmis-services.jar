@@ -1,7 +1,8 @@
 <schema adapter="tagabukid_hrmis">
 	<element tablename="hrmis_appointmentjoborder_signatorygrouping">
 		<field name="objid" primary="true" prefix="SG" searchable="false" />
-		<field name="signatorygroupname" required="true" visible="false" searchable="false" />
+		<field name="state" required="true" visible="true" searchable="false" />
+		<field name="signatorygroupname" required="true" visible="true" searchable="false" />
 		<field name= "remarks" required="true" visible="false" searchable="false"/>
 		<field name= "recordlog_datecreated" required="true" visible="false" searchable="false"/>
 		<field name= "recordlog_createdbyuserid" required="true" visible="false" searchable="false"/>

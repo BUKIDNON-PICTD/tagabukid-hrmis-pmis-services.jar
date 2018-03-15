@@ -11,6 +11,7 @@
 		<field name= "currentsalarystep" visible="false" searchable="false"/>
 		<field name= "compensation" required="true" visible="false" searchable="false"/>
 		<field name= "remarks" required="true" visible="false" searchable="false"/>
+		<field name= "signatorygroup" required="true" visible="false" searchable="false"/>
 		<field name= "recordlog_datecreated" required="true" visible="false" searchable="false"/>
 		<field name= "recordlog_createdbyuserid" required="true" visible="false" searchable="false"/>
 		<field name= "recordlog_createdbyuser" required="true" visible="false" searchable="false"/>
