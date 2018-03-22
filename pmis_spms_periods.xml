@@ -1,0 +1,8 @@
+<schema adapter="tagabukid_hrmis">
+	<element tablename="pmis_spms_periods">
+		<field name="objid" primary="true" prefix="PSP" />
+		<field name="year" required="true" caption="Year" searchable="true" indexed="true" />
+		<field name="remarks" caption="Remarks" searchable="true" indexed="true"/>
+	</element>
+</schema>
+
