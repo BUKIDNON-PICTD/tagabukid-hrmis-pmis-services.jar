@@ -3,6 +3,7 @@
 		<field name="objid" primary="true" />
 		<field name="state" required="true" />
 		<field name="title" required="true" />
+		<field name="description" required="true" />
 		<field name="code" />
 		<field name="allotedbudget" />
 		<field name="actualaccomplishment" />
@@ -11,6 +12,7 @@
 		<field name="type" />
 		<field name="lft" required="true" />
 		<field name="rgt" required="true" />
+		<field name="quantity"/>
 	</element>
 
 	<element name="pmissuccessindicatorsorg" tablename="pmis_successindicators_org">

@@ -1,8 +1,7 @@
 [getRootNodes]
-SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
-FROM pmis_successindicators AS node,
-     pmis_successindicators AS parent
-WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND node.parentid IS NULL AND  node.type='root'
+SELECT node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
+FROM pmis_successindicators AS node
+WHERE node.parentid IS NULL AND  node.type='root'
 GROUP BY node.title
 ORDER BY node.lft
 
@@ -11,10 +10,10 @@ SELECT a.* FROM pmis_successindicators a  WHERE
 a.orgid IN ('ROOT',$P{orgid}) AND a.parentid IS NULL and a.type='root' ORDER BY a.code
 
 [getChildNodes]
-SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
-FROM pmis_successindicators AS node,
-        pmis_successindicators AS parent
-WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND node.parentid=$P{objid} AND node.type <> 'document'
+SELECT node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
+FROM pmis_successindicators AS node
+WHERE node.parentid=$P{objid} 
+AND (node.title LIKE $P{searchtext} OR node.code LIKE $P{searchtext})
 GROUP BY node.title
 ORDER BY node.lft
 
@@ -23,10 +22,67 @@ SELECT a.* FROM pmis_successindicators a WHERE
 a.parentid=$P{objid} AND a.type='root' ORDER BY a.code
 
 [getList]
-SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
-FROM pmis_successindicators AS node,
-        pmis_successindicators AS parent
-WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND node.parentid=$P{objid}
+SELECT node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
+FROM pmis_successindicators AS node
+WHERE node.parentid=$P{objid}
+AND (node.title LIKE $P{searchtext} OR node.code LIKE $P{searchtext})
+GROUP BY node.title
+ORDER BY node.lft
+
+[getListByOrg]
+SELECT node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
+FROM pmis_successindicators AS node
+WHERE node.parentid=$P{objid} 
+AND (node.title LIKE $P{searchtext} OR node.code LIKE $P{searchtext})
+AND node.objid IN (SELECT DISTINCT
+mfo.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo'
+
+UNION
+
+SELECT DISTINCT
+op.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo'
+
+UNION
+
+SELECT DISTINCT
+dp.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo'
+
+UNION
+
+SELECT DISTINCT
+ip.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo')
 GROUP BY node.title
 ORDER BY node.lft
 
@@ -60,6 +116,63 @@ SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location
 FROM pmis_successindicators AS node,
         pmis_successindicators AS parent
 WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND (node.title LIKE $P{searchtext} OR node.code LIKE $P{searchtext})
+GROUP BY node.title
+ORDER BY node.lft
+
+
+[getSearchByOrg]
+SELECT node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
+FROM pmis_successindicators node
+WHERE (node.title LIKE $P{searchtext} OR node.code LIKE $P{searchtext})
+AND node.objid IN (SELECT DISTINCT
+mfo.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo'
+
+UNION
+
+SELECT DISTINCT
+op.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo'
+
+UNION
+
+SELECT DISTINCT
+dp.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo'
+
+UNION
+
+SELECT DISTINCT
+ip.objid AS objid
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo')
 GROUP BY node.title
 ORDER BY node.lft
 
@@ -318,3 +431,17 @@ LEFT JOIN pmis_ratings rt ON rt.`objid` = ipitem.`tid`
 WHERE ipcr.employee_PersonId = $P{PersonId}
 AND ipcr.period = $P{period}
 AND ipcr.year = $P{year}
+
+[getSuccessIndicatorRatingBaseline]
+SELECT * FROM pmis_ratings WHERE rating = 3 AND `type` = $P{type} AND title IS NOT NULL GROUP BY title ORDER BY title
+
+[getSuccessIndicatorRatingByBaseline]
+SELECT * FROM pmis_ratings WHERE siid = $P{siid} AND `type` = $P{type} ORDER by rating
+
+
+[getListForVerification]
+SELECT objid,title,`type`,recordlog_datecreated as datecreated,recordlog_createdbyuser as createdby
+FROM pmis_successindicators 
+WHERE title LIKE $P{title}
+ORDER BY title
+

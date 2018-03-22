@@ -4,7 +4,7 @@ import java.rmi.server.*;
 import com.rameses.common.*
 import com.rameses.services.extended.*
 
-class TagabukidSIMService extends ActiveCrudNodeService {
+class TagabukidSIMService extends ActiveCrudListService {
 
 	@ActiveDB(value='pmissuccessindicators', em='tagabukid_hrmis')
 	def em;
@@ -153,6 +153,7 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 
 
 	void updateitemsipcr(o){
+		// println o.qualities
 		o.qualities.each{
 			em.update(it, 'pmisrating')
 		}
@@ -165,19 +166,37 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	
 	}
 
+	@ProxyMethod
+	public def getNodes( def o ) {
+		// o.userid = env.USERID;
+		// o.usergroupfilter = "";
+		// if (o.usergroupid) o.domain = o.usergroupid;
+		if(!o.searchtext)
+			o.searchtext = '%'
+		else{
+			o.searchtext += '%'
+		}	
 
-	public void afterNode( def selectedNode, def list ) {
-		// def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
-		//list.removeAll( list.findAll{it.orgid != orgid && it.orgid != 'ROOT'} );
+		def list;
+		if( o.root ){
+			list = em.getRootNodes(o);
+		}
+		else{
+			if (o.org && o.parentid != null){
+				o.orgid = o.org.OrgUnitId.toString();
+				list = em.getListByOrg(o);
+			}else{
+				list = em.getChildNodes(o);
+			}
+			
+
+		}
 
 		list.each { 
-			it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
-			if(selectedNode.root == true) {
-				it.folder = true;
-			}	
-			it.caption = it.code + " (" + it.title + ") ";
+			if (o.root) it.folder = true;
+			it.caption = it.code + " - " + it.title;
 			it.filetype = "sim-"+it.type;
-
+			it.allowSearch = true;
 			if (it.type == 'root'){
 				it.children = [ 
 					[caption:'PMIS', filetype: 'sim-pmis'],
@@ -201,7 +220,53 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 			}
 			else if (it.type =='dp'){
 				it.children = [ 
-					[caption:'IPCR', filetype: 'sim-ip']
+					[caption:'IPCR', filetype: 'sim-ip'],
+				]
+			}
+		}
+		return list;
+	}
+
+	public void beforeNode( def selectedNode, def root ) {
+		// println selectedNode;
+	}
+	public void afterNode( def selectedNode, def list ) {
+		// println list
+		// def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
+		//list.removeAll( list.findAll{it.orgid != orgid && it.orgid != 'ROOT'} );
+
+		list.each { 
+			// it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
+			if(selectedNode.root == true) {
+				it.folder = true;
+			}	
+			it.caption = it.code + " - " + it.title;
+			it.filetype = "sim-"+it.type;
+			it.allowSearch = true;
+			if (it.type == 'root'){
+				it.children = [ 
+					[caption:'PMIS', filetype: 'sim-pmis'],
+				]
+			}
+
+			if (it.type == 'pmis'){
+				it.children = [ 
+					[caption:'MFO', filetype: 'sim-mfo'],
+				]
+			}
+			else if (it.type =='mfo'){
+			it.children = [ 
+					[caption:'OPCR', filetype: 'sim-op'],
+				]
+			}
+			else if (it.type =='op'){
+				it.children = [ 
+					[caption:'DPCR', filetype: 'sim-dp'],
+				]
+			}
+			else if (it.type =='dp'){
+				it.children = [ 
+					[caption:'IPCR', filetype: 'sim-ip'],
 				]
 			}
 			
@@ -254,23 +319,30 @@ class TagabukidSIMService extends ActiveCrudNodeService {
 	}
 
 	public void beforeList( def p ) {
-		if(p.name == "search") {
+		if(p.org){
+			p.orgid = p.org.OrgUnitId.toString();
+			p._listMethod = "getSearchByOrg";
+		}else if (p.name == "search") {
 			p._listMethod = "getSearch";
+		}
+
+		if(p.org && p.parentid != null){
+			p.orgid = p.org.OrgUnitId.toString();
+			p._listMethod = "getListByOrg";
 		}
 		if( p._tag ) {
 			p._listMethod = "getLookup";
 			p.type = p._tag;
 			if(!p.parentid) p.parentid = '%';
 		}
-
-
+		// println p
 	}
 	
 	public void afterList( def p, def list ) {
 		
 
 		list.each { 
-			it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
+			// it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
 			it.filetype = 'sim-'+it.type;
 
 		}
@@ -362,6 +434,11 @@ class TagabukidSIMService extends ActiveCrudNodeService {
     @ProxyMethod
     public def findOrgById(o){
 		return emorg.findOrgById([orgid:o])
+    }
+
+     @ProxyMethod
+    public def getSuccessIndicatorRatingByBaseline(o){
+		return em.getSuccessIndicatorRatingByBaseline([siid:o.siid,type:o.type])
     }
 
   //   @ProxyMethod

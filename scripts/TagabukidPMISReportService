@@ -60,8 +60,9 @@ class TagabukidPMISReportService
 		
 		def items = em.getIPCRIndividual([year:params.year,period:params.period,PersonId:params.employee.PersonId.toString()]);
 		def data = [:]
-		println "TEST"*50
+		
 		println items
+
 		data.reportdata = items;
 
 		data.parameters = [
