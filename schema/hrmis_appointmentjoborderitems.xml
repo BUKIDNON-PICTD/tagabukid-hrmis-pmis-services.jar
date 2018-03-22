@@ -1,0 +1,9 @@
+<schema adapter="tagabukid_hrmis">
+	<element tablename="hrmis_appointmentjoborderitems">
+		<field name= "objid" primary="true" visible="false" searchable="false"/>
+		<field name= "parentid" required="true" visible="false" searchable="false"/>
+		<field name= "entityid" required="true" visible="true" searchable="true"/>
+		<field name= "position" required="true" visible="true" searchable="true"/>
+		<field name= "salary" required="true" visible="true" searchable="true"/>
+	</element>
+</schema>

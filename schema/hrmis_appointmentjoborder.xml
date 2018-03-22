@@ -1,0 +1,22 @@
+<schema adapter="tagabukid_hrmis">
+	<element tablename="hrmis_appointmentjoborder">
+		<field name= "objid" primary="true" visible="false" searchable="false"/>
+		<field name= "appointmentgroupname" required="true" visible="true" searchable="true"/>
+		<field name= "status" required="true" visible="false" searchable="false"/>
+		<field name= "effectivefrom" required="true" visible="false" searchable="false"/>
+		<field name= "effectiveuntil" required="true" visible="false" searchable="false"/>
+		<field name= "natureofappointment" required="true" visible="false" searchable="false"/>
+		<field name= "dateissued" required="true" visible="false" searchable="false"/>
+		<field name= "org_objid" required="true" visible="false" searchable="false"/>
+		<field name= "currentsalarystep" visible="false" searchable="false"/>
+		<field name= "compensation" required="true" visible="false" searchable="false"/>
+		<field name= "remarks" required="true" visible="false" searchable="false"/>
+		<field name= "signatorygroup" required="true" visible="false" searchable="false"/>
+		<field name= "recordlog_datecreated" required="true" visible="false" searchable="false"/>
+		<field name= "recordlog_createdbyuserid" required="true" visible="false" searchable="false"/>
+		<field name= "recordlog_createdbyuser" required="true" visible="false" searchable="false"/>
+		<field name= "recordlog_dateupdated" required="true" visible="false" searchable="false"/>
+		<field name= "recordlog_lastupdatedbyuserid" required="true" visible="false" searchable="false"/>
+		<field name= "recordlog_lastupdatedbyuser" required="true" visible="false" searchable="false"/>
+	</element>
+</schema>
