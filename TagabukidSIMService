@@ -1,0 +1,477 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+import java.rmi.server.*;
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+class TagabukidSIMService extends ActiveCrudListService {
+
+	@ActiveDB(value='pmissuccessindicators', em='tagabukid_hrmis')
+	def em;
+
+	@Env
+	def env;
+
+	@ActiveDB(value='pmissuccessindicators', em='tagabukid_subay')
+	def emorg;
+
+	@Service('TagabukidSubayTransactionService')
+	def dtsSvc 
+
+	@Service('DateService')
+	def dtSvc 
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@ActiveDB(value='pmissuccessindicators', em='postgrehrmis')
+	def emposthrmis
+
+	@ProxyMethod
+	def initCreate(){
+		def entity = [:];
+		entity.employee = [:]
+		entity.dpcrlist = [];
+		entity.behavioraltypelist = [];
+        // entity.DPCR = [];
+        // entity.IPCR = [];
+        entity.state = 'DRAFT'
+        entity.org = [:]
+		entity.recordlog = [:]
+		entity.recordlog.datecreated = dtSvc.serverDate
+        entity.recordlog.createdbyuserid = env.USERID
+        entity.recordlog.createdbyuser = env.FULLNAME
+        entity.recordlog.dateoflastupdate =  dtSvc.serverDate
+        entity.recordlog.lastupdatedbyuserid = env.USERID
+        entity.recordlog.lastupdatedbyuser = env.FULLNAME
+        
+        entity.ipcritems = []
+      
+        
+       
+        return entity;
+	}
+    void addNode(parent){
+    	em.changeNodeRight([myRight:parent.rgt]);
+		em.changeNodeLeft([myRight:parent.rgt]);
+    }
+
+    @ProxyMethod
+	void addChild(parent){
+    	em.changeParentRight([myLeft:parent.lft]);
+		em.changeParentLeft([myLeft:parent.lft]);
+    }
+
+    public void beforeCreate(o){
+    		def parent = em.findParent(o);
+    	
+	    	addChild(parent);
+
+	    	o.lft = parent.lft + 1;
+			o.rgt = parent.lft + 2;
+
+			if(o.type=='pmis'){
+				o.title = o.code;
+			}
+    }
+
+    public void afterCreate(o){
+    	if(o.type=='ip'){
+    		saveitemsipcr(o);
+    	}else{
+    		saveitems(o);	
+    	}
+    	
+
+
+    }
+
+    public void afterUpdate(o){
+	   	if(o.type=='ip'){
+	   		updateitemsipcr(o);
+	   	}else{
+	   		saveitems(o);	
+	   	}
+    	
+ 	
+    }
+
+    void saveitems(o){
+		def oldSuccessIndicatorOrg = em.getSuccessIndicatorOrg([xxx:o.objid]) // many to many
+
+		if (!o.orgs)
+			o.orgs = []
+	
+		def todelete = oldSuccessIndicatorOrg - o.orgs.collect{[siid:o.objid,orgid:it.objid]} 
+		def toadd 	 = o.orgs.collect{[siid:o.objid,orgid:it.objid]} - oldSuccessIndicatorOrg
+		
+
+		todelete.each{
+			em.deleteSuccessIndicatorOrg([siid:o.objid, orgid:it.orgid])
+		}
+
+		toadd.each{
+			
+			em.create(it, 'pmissuccessindicatorsorg')
+		
+		}
+		
+	
+	}
+
+	void saveitemsipcr(o){
+		// println o
+		// em.deleteSuccessIndicatorRating([xxx:o.objid])	// one to many
+		o.qualities.each{
+			it.objid = 'QSI' + new java.rmi.server.UID();
+			it.type = 'Q'
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'pmisrating')
+		}
+		
+
+		o.timeliness.each{
+			it.objid = 'TSI' + new java.rmi.server.UID(); 
+			it.type = 'T'
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'pmisrating')
+		}
+		o.efficiency.each{
+			it.objid = 'ESI' + new java.rmi.server.UID();
+			it.type = 'E'
+			it.siid = o.objid
+			it.state = 'DRAFT'
+			em.create(it, 'pmisrating')
+		}
+	
+	}
+
+
+
+
+
+	void updateitemsipcr(o){
+		// println o.qualities
+		o.qualities.each{
+			em.update(it, 'pmisrating')
+		}
+		o.timeliness.each{
+			em.update(it, 'pmisrating')
+		}
+		o.efficiency.each{
+			em.update(it, 'pmisrating')
+		}
+	
+	}
+
+	@ProxyMethod
+	public def getNodes( def o ) {
+		// o.userid = env.USERID;
+		// o.usergroupfilter = "";
+		// if (o.usergroupid) o.domain = o.usergroupid;
+		if(!o.searchtext)
+			o.searchtext = '%'
+		else{
+			o.searchtext += '%'
+		}	
+
+		def list;
+		if( o.root ){
+			list = em.getRootNodes(o);
+		}
+		else{
+			if (o.org && o.parentid != null){
+				o.orgid = o.org.OrgUnitId.toString();
+				list = em.getListByOrg(o);
+			}else{
+				list = em.getChildNodes(o);
+			}
+			
+
+		}
+
+		list.each { 
+			if (o.root) it.folder = true;
+			it.caption = it.code + " - " + it.title;
+			it.filetype = "sim-"+it.type;
+			it.allowSearch = true;
+			if (it.type == 'root'){
+				it.children = [ 
+					[caption:'PMIS', filetype: 'sim-pmis'],
+				]
+			}
+
+			if (it.type == 'pmis'){
+				it.children = [ 
+					[caption:'MFO', filetype: 'sim-mfo'],
+				]
+			}
+			else if (it.type =='mfo'){
+			it.children = [ 
+					[caption:'OPCR', filetype: 'sim-op'],
+				]
+			}
+			else if (it.type =='op'){
+				it.children = [ 
+					[caption:'DPCR', filetype: 'sim-dp'],
+				]
+			}
+			else if (it.type =='dp'){
+				it.children = [ 
+					[caption:'IPCR', filetype: 'sim-ip'],
+				]
+			}
+		}
+		return list;
+	}
+
+	public void beforeNode( def selectedNode, def root ) {
+		// println selectedNode;
+	}
+	public void afterNode( def selectedNode, def list ) {
+		// println list
+		// def orgid = dtsSvc.getUserOrg(env.USERID).org.objid
+		//list.removeAll( list.findAll{it.orgid != orgid && it.orgid != 'ROOT'} );
+
+		list.each { 
+			// it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
+			if(selectedNode.root == true) {
+				it.folder = true;
+			}	
+			it.caption = it.code + " - " + it.title;
+			it.filetype = "sim-"+it.type;
+			it.allowSearch = true;
+			if (it.type == 'root'){
+				it.children = [ 
+					[caption:'PMIS', filetype: 'sim-pmis'],
+				]
+			}
+
+			if (it.type == 'pmis'){
+				it.children = [ 
+					[caption:'MFO', filetype: 'sim-mfo'],
+				]
+			}
+			else if (it.type =='mfo'){
+			it.children = [ 
+					[caption:'OPCR', filetype: 'sim-op'],
+				]
+			}
+			else if (it.type =='op'){
+				it.children = [ 
+					[caption:'DPCR', filetype: 'sim-dp'],
+				]
+			}
+			else if (it.type =='dp'){
+				it.children = [ 
+					[caption:'IPCR', filetype: 'sim-ip'],
+				]
+			}
+			
+		}
+
+		
+		// if (selectedNode.type == 'mfo'){
+		// 	list = list.findAll{it.orgs.find{it.orgid == orgid}}
+		// 	println list
+		// }
+
+	}
+
+	@ProxyMethod
+	public def getColumns( def o ) {
+		def cols = [
+			// [name:'location', caption:'Hierarchy' ],
+			[name:'code', caption:'Code', width:100, maxWidth:200 ],
+			[name:'title', caption:'Title' ],
+			[name:'allotedbudget', caption:'Alloted Budget'],
+			[name:'actualaccomplishment', caption:'Actual Accomplishment'],
+			[name:'remarks', caption:'Remarks'],
+			[name:'type', caption:'Type' ]
+		];
+		return cols;
+	}
+
+	public def open(o) {
+		def x = em.findInfo(o);
+		if (o.type == 'ip'){
+			x.ratings = em.getSuccessIndicatorRatings([xxx:o.objid])
+			x.qualities = x.ratings.findAll{it.type=='Q'}
+			x.timeliness = x.ratings.findAll{it.type=='T'}
+			x.efficiency = x.ratings.findAll{it.type=='E'}
+		}
+		else
+		{
+			x.orgs = em.getSuccessIndicatorOrg([xxx:o.objid])
+			if(x.orgs){
+				x.orgs.each{ y ->
+					def org = emorg.findOrgById([orgid:y.orgid])
+					y.objid = org.OrgUnitId.toString()
+					y.name = org.Entity.Name
+					y.code = org.Entity.AcronymAbbreviation
+				}
+			}
+		}
+		// println x
+		return x;
+	}
+
+	public void beforeList( def p ) {
+		if(p.org){
+			p.orgid = p.org.OrgUnitId.toString();
+			p._listMethod = "getSearchByOrg";
+		}else if (p.name == "search") {
+			p._listMethod = "getSearch";
+		}
+
+		if(p.org && p.parentid != null){
+			p.orgid = p.org.OrgUnitId.toString();
+			p._listMethod = "getListByOrg";
+		}
+		if( p._tag ) {
+			p._listMethod = "getLookup";
+			p.type = p._tag;
+			if(!p.parentid) p.parentid = '%';
+		}
+		// println p
+	}
+	
+	public void afterList( def p, def list ) {
+		
+
+		list.each { 
+			// it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
+			it.filetype = 'sim-'+it.type;
+
+		}
+	
+
+	}
+
+	
+    @ProxyMethod
+    public def getSubAccounts(o) {
+    	return em.getSubAccounts( o );
+    }
+    
+  	@ProxyMethod
+    public def saveSubAccount(o) {
+    	return em.save( o );
+    }
+
+ 
+
+    @ProxyMethod
+    public def getSIByEmployeeOffice(o) {
+    	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.OrgUnitId] );
+    	dpcrlist.each{
+    		it.objid = 'DPCR' + new java.rmi.server.UID();
+    		it.ipcrlist = []
+    	}
+    	return dpcrlist;
+    }
+
+    @ProxyMethod
+    public def getBehavioral(o){
+    	def behaviorallist = em.getBehavioral ( [ipcrid:o.ipcrid]);
+    	behaviorallist.each{
+    		it.objid = 'BRT' + new java.rmi.server.UID();
+    		it.behaviorallist = []
+    		}
+    		return behaviorallist;
+    	}
+
+
+    @ProxyMethod
+    public def getBahavioralRating(o){
+		return em.getBehavioral ( [type:o]).each{
+			it.behavioralid = it.objid
+			it.objid = 'BRT' + new java.rmi.server.UID();
+
+		};
+	}
+
+     @ProxyMethod
+    public def getSIByIPCRId(o) {
+    	def dpcrlist = em.getSIByIPCRId( [ipcrid:o] );
+    	def test = []
+    	// println dpcrlist.groupBy{it.dpid}
+    	dpcrlist.each{
+    		
+    	}
+    	// def test = dpcrlist.collect{
+    	// 	[
+    	// 	 dpid:it.dpid,
+    	// 	 dptitle:it.dptitle,
+    	// 	 ipcrlist:[]
+    	// 	]
+    	// }.groupBy{it.dpid}
+    	// println test
+    	// dpcrlist.each{
+    	// 	it.objid = 'DPCR' + new java.rmi.server.UID();
+    	// 	it.ipcrlist = []
+    	// }
+    	return dpcrlist;
+    }
+
+    @ProxyMethod
+    public def getIPCRNo(){
+		def appcode = "PMIS"
+		def yr      = dtSvc.serverYear;
+		def mnth    = dtSvc.serverMonth;
+		def smon    = ( mnth < 10 ) ? "0"+mnth : mnth+"";
+		def prefix  = appcode+yr+smon;
+		return prefix+seqSvc.getNextFormattedSeries(prefix);
+    }
+
+    @ProxyMethod
+    public def findProfileById(o){
+		return emposthrmis.findProfileById([ProfileId:"'"+o+"'"])
+    }
+
+    @ProxyMethod
+    public def findOrgById(o){
+		return emorg.findOrgById([orgid:o])
+    }
+
+     @ProxyMethod
+    public def getSuccessIndicatorRatingByBaseline(o){
+		return em.getSuccessIndicatorRatingByBaseline([siid:o.siid,type:o.type])
+    }
+
+  //   @ProxyMethod
+  //   public def getDPCRList(o){
+		// return emorg.findOrgById([orgid:o])
+  //   }
+
+
+
+	// @ProxyMethod
+ //    public def changeParent(o) {
+    	
+	// 	def parent = em.findParent(o);
+	// 	addChild(parent);
+ //    	o.lft = parent.lft + 1;
+	// 	o.rgt = parent.lft + 2;
+ //    	return em.changeParent( o );
+ //    }
+
+    // @ProxyMethod 
+    // public void syncFromCloud() {
+    // 	def list = []
+    // 	def start = 0
+    // 	while(true){
+    // 		list = acctSvc.getList([searchtext: '%', _start:start, _limit: 25]);
+    // 		if(! list ) break;
+
+    // 		list.each { 
+    // 			em.save(it);
+    // 		}
+    // 		start += 25
+    // 	}
+    // }
+
+
+}
