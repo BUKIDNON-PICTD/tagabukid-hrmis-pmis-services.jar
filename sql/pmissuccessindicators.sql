@@ -375,7 +375,7 @@ SELECT op.objid AS opid,
 FROM pmis_successindicators op
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
-INNER JOIN pmis_ipcr_details id ON id.successindicatorid = ip.objid
+INNER JOIN pmis_ipcr_items id ON id.successindicatorid = ip.objid
 INNER JOIN pmis_ratings prq ON prq.objid = id.qid
 INNER JOIN pmis_ratings prt ON prt.objid = id.tid
 INNER JOIN pmis_ratings pre ON pre.objid = id.eid
@@ -396,7 +396,7 @@ AND siid = $P{ipid} AND type = $P{type}
 ORDER BY rating
 
 [getBehavioral]
-SELECT * FROM pmis_ipcr_behavioral_masterfile 
+SELECT * FROM pmis_behavioral
 WHERE type = $P{type}
 ORDER BY sortorder
 
@@ -445,3 +445,5 @@ FROM pmis_successindicators
 WHERE title LIKE $P{title}
 ORDER BY title
 
+[getBehavioralTypes]
+SELECT * FROM pmis_behavioral ORDER BY `type`, `sortorder`
