@@ -354,7 +354,11 @@ AND op.type = 'op'
 ORDER BY dp.code
 
 [getSIByIPCRId]
-SELECT op.objid AS opid,
+SELECT 
+  mfo.objid AS mfoid,
+  mfo.title AS mfotitle,
+  mfo.type AS mfotype,
+  op.objid AS opid,
   op.title AS optitle,
   op.type AS optype,
   dp.objid AS dpid,
@@ -372,14 +376,15 @@ SELECT op.objid AS opid,
   pre.objid AS e_objid,
   pre.title AS e_title,
   pre.rating AS e_rating
-FROM pmis_successindicators op
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_ipcr_items id ON id.successindicatorid = ip.objid
-INNER JOIN pmis_ratings prq ON prq.objid = id.qid
-INNER JOIN pmis_ratings prt ON prt.objid = id.tid
-INNER JOIN pmis_ratings pre ON pre.objid = id.eid
-WHERE op.type = 'op'
+LEFT JOIN pmis_ratings prq ON prq.objid = id.qid
+LEFT JOIN pmis_ratings prt ON prt.objid = id.tid
+LEFT JOIN pmis_ratings pre ON pre.objid = id.eid
+WHERE mfo.type = 'mfo'
 AND id.ipcrid = $P{ipcrid}
 ORDER BY dp.code
 

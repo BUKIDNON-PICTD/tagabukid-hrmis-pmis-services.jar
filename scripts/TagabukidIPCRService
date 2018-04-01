@@ -1,0 +1,176 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+import com.rameses.services.extended.*;
+
+
+class TagabukidIPCRService extends ActiveCrudListService 
+{
+	@ActiveDB(value='pmissuccessindicators')
+	def emmain;
+
+	
+	@ActiveDB(value='pmissuccessindicators', em='tagabukid_hrmis')
+	def em;
+
+	@Env
+	def env;
+
+	@Service('DateService')
+	def dtSvc 
+
+	@Service("SequenceService")
+	def seqSvc;
+
+	@Service("PersistenceService")
+    def persistenceSvc;
+
+    @ActiveDB(value='pmissuccessindicators', em='postgrehrmis')
+	def emposthrmis
+
+	@ActiveDB(value='pmissuccessindicators', em='tagabukid_subay')
+	def emorg;
+
+
+	@ProxyMethod
+	def initCreate(){
+		
+		def entity = [:];
+		entity.objid = 'IP' + new java.rmi.server.UID()
+		entity.employee = [:]
+		entity.dpcrlist = [];
+		entity.year =  dtSvc.getServerYear()
+		entity.behavioraltypelist = []
+		def c=5,p=3,s=1;
+		for(def i=1; i<=c;i++){
+			entity.behavioraltypelist.add(
+				[
+					objid : 'IPB' + new java.rmi.server.UID(),
+					bahavioralratinglist : getBahavioralRating('Client'),
+					ipcrid : entity.objid,
+					type:'Client'
+				]
+				)
+		}
+		for(def i=1; i<=p;i++){
+			entity.behavioraltypelist.add(
+				[
+					objid : 'IPB' + new java.rmi.server.UID(),
+					bahavioralratinglist : getBahavioralRating('Peer'),
+					ipcrid : entity.objid,
+					type:'Peer'
+				]
+				)
+		}
+		for(def i=1; i<=s;i++){
+			entity.behavioraltypelist.add(
+				[
+					objid : 'IPB' + new java.rmi.server.UID(),
+					bahavioralratinglist : getBahavioralRating('Supervisor'),
+					ipcrid : entity.objid,
+					type:'Supervisor'
+				]
+				)
+		}
+	
+        entity.state = 'DRAFT TARGET'
+        entity.org = [:]
+		entity.recordlog = [:]
+		entity.recordlog.datecreated = dtSvc.serverDate
+        entity.recordlog.createdbyuserid = env.USERID
+        entity.recordlog.createdbyuser = env.FULLNAME
+        entity.recordlog.dateoflastupdate =  dtSvc.serverDate
+        entity.recordlog.lastupdatedbyuserid = env.USERID
+        entity.recordlog.lastupdatedbyuser = env.FULLNAME
+        
+        entity.ipcritems = []
+        return entity;
+
+	}
+
+	@ProxyMethod
+    public def getBahavioralRating(o){
+		return em.getBehavioral ( [type:o]).each{
+			it.behavioralid = it.objid
+			it.objid = 'IPBI' + new java.rmi.server.UID();
+		};
+	}
+
+	@ProxyMethod
+    public def getSIByEmployeeOffice(o) {
+    	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.OrgUnitId] );
+    	dpcrlist.each{
+    		it.objid = 'DPCR' + new java.rmi.server.UID();
+    		it.ipcrlist = []
+    	}
+    	return dpcrlist;
+    }
+
+    @ProxyMethod
+    public def getIPCRNo(){
+		def appcode = "PMIS"
+		def yr      = dtSvc.serverYear;
+		def mnth    = dtSvc.serverMonth;
+		def smon    = ( mnth < 10 ) ? "0"+mnth : mnth+"";
+		def prefix  = appcode+yr+smon;
+		return prefix+seqSvc.getNextFormattedSeries(prefix);
+    }
+
+    @ProxyMethod
+    public def findProfileById(o){
+		return emposthrmis.findProfileById([ProfileId:"'"+o+"'"])
+    }
+
+    @ProxyMethod
+    public def findOrgById(o){
+		return emorg.findOrgById([orgid:o])
+    }
+
+    @ProxyMethod
+    public def getSuccessIndicatorRatingByBaseline(o){
+		return em.getSuccessIndicatorRatingByBaseline([siid:o.siid,type:o.type])
+    }
+
+    @ProxyMethod
+    public def getDPCRByIPCRId(o) {
+    	def mfolist = em.getSIByIPCRId( [ipcrid:o] );
+    	// println mfolist
+    	// println dpcrlist.groupBy{it.dpid}
+	 // 	mfolist = mfolist.groupBy({[id:it.mfoid,title:it.mfotitle]}).collect{k,v->
+		//      [
+		//         mfoid   :k.id,
+		//         mfotitle:k.title,
+		//         opcrlist:v.groupBy({[id:it.opid,title:it.optitle]}).collect{a,b->
+		//                [ 
+		//                 opid    :a.id,
+		//                 optitle :a.title,
+		//                 dpcrlist:b.groupBy({[id:it.dpid,title:it.dptitle]}).collect{q,w->
+		//                        [ 
+		//                         dpid    :q.id,
+		//                         dptitle :q.title,
+		//                         ipcrlist:w.collect{[
+		//                                 successindicator:it.successindicator,
+		//                                 q:it.q,
+		//                                 e:it.e,
+		//                                 t:it.t
+		//                             ]}
+		//                        ]
+		//                  }
+		//                ]
+		//          }
+		//      ]   
+		// }
+		def dpcrlist = mfolist.groupBy({[id:it.dpid,title:it.dptitle]}).collect{q,w->
+                               [ 
+                                dpid    :q.id,
+                                dptitle :q.title,
+                                ipcrlist:w.collect{[
+                                        successindicator:it.successindicator,
+                                        q:it.q,
+                                        e:it.e,
+                                        t:it.t
+                                    ]}
+                               ]
+                         }
+    	return dpcrlist;
+    }
+}

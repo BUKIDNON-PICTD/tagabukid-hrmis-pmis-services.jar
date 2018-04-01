@@ -8,10 +8,10 @@
 		<field name="rateraddress" /> 
 		<field name="ratercontactinfo" /> 
 		<field name="ratingdate" /> 
-		<complex name="parent" ref="pmis_ipcr" jointype="many-to-one" includefields="objid,icrno" required="false">
+		<complex name="parent" ref="pmis_ipcr" jointype="many-to-one" includefields="objid,ipcrid" required="false">
 			<key field="ipcrid" target="objid" />
 		</complex>
-		<complex name="bahavioralratinglist" ref="pmis_ipcr_behavioral_items" jointype="one-to-many">
+		<complex name="behavioralratinglist" ref="pmis_ipcr_behavioral_items" jointype="one-to-many">
 			<key field="objid" target="parentid" /> 		
 		</complex>
 	</element>

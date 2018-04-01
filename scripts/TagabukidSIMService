@@ -27,71 +27,57 @@ class TagabukidSIMService extends ActiveCrudListService {
 	@ActiveDB(value='pmissuccessindicators', em='postgrehrmis')
 	def emposthrmis
 
-	@ProxyMethod
-	def initCreate(){
-		def entity = [:];
-		entity.objid = 'IP' + new java.rmi.server.UID()
-		entity.employee = [:]
-		entity.dpcrlist = [];
+	// @ProxyMethod
+	// def initCreate(){
+	// 	def entity = [:];
+	// 	entity.objid = 'IP' + new java.rmi.server.UID()
+	// 	entity.employee = [:]
+	// 	entity.dpcrlist = [];
+	// 	entity.behavioraltypelist = []
+	// 	def c=5,p=3,s=1;
+	// 	for(def i=1; i<=c;i++){
+	// 		entity.behavioraltypelist.add(
+	// 			[
+	// 				objid : 'IPB' + new java.rmi.server.UID(),
+	// 				bahavioralratinglist : getBahavioralRating('Client'),
+	// 				ipcrid : entity.objid,
+	// 				type:'Client'
+	// 			]
+	// 			)
+	// 	}
+	// 	for(def i=1; i<=p;i++){
+	// 		entity.behavioraltypelist.add(
+	// 			[
+	// 				objid : 'IPB' + new java.rmi.server.UID(),
+	// 				bahavioralratinglist : getBahavioralRating('Peer'),
+	// 				ipcrid : entity.objid,
+	// 				type:'Peer'
+	// 			]
+	// 			)
+	// 	}
+	// 	for(def i=1; i<=s;i++){
+	// 		entity.behavioraltypelist.add(
+	// 			[
+	// 				objid : 'IPB' + new java.rmi.server.UID(),
+	// 				bahavioralratinglist : getBahavioralRating('Supervisor'),
+	// 				ipcrid : entity.objid,
+	// 				type:'Supervisor'
+	// 			]
+	// 			)
+	// 	}
+ //        entity.state = 'DRAFT'
+ //        entity.org = [:]
+	// 	entity.recordlog = [:]
+	// 	entity.recordlog.datecreated = dtSvc.serverDate
+ //        entity.recordlog.createdbyuserid = env.USERID
+ //        entity.recordlog.createdbyuser = env.FULLNAME
+ //        entity.recordlog.dateoflastupdate =  dtSvc.serverDate
+ //        entity.recordlog.lastupdatedbyuserid = env.USERID
+ //        entity.recordlog.lastupdatedbyuser = env.FULLNAME
+ //        entity.ipcritems = []
+ //        return entity;
+	// }
 
-		entity.behavioraltypelist = []
-		def c=5,p=3,s=1;
-		for(def i=1; i<=c;i++){
-			entity.behavioraltypelist.add(
-				[
-					objid : 'IPB' + new java.rmi.server.UID(),
-					bahavioralratinglist : getBahavioralRating('Client'),
-					ipcrid : entity.objid,
-					type:'Client'
-				]
-				)
-
-			
-		}
-		for(def i=1; i<=p;i++){
-			entity.behavioraltypelist.add(
-				[
-					objid : 'IPB' + new java.rmi.server.UID(),
-					bahavioralratinglist : getBahavioralRating('Peer'),
-					ipcrid : entity.objid,
-					type:'Peer'
-				]
-				)
-
-			
-		}
-		for(def i=1; i<=s;i++){
-			entity.behavioraltypelist.add(
-				[
-					objid : 'IPB' + new java.rmi.server.UID(),
-					bahavioralratinglist : getBahavioralRating('Supervisor'),
-					ipcrid : entity.objid,
-					type:'Supervisor'
-				]
-				)
-
-			
-		}
-	
-
-        // entity.DPCR = [];
-        // entity.IPCR = [];
-        entity.state = 'DRAFT'
-        entity.org = [:]
-		entity.recordlog = [:]
-		entity.recordlog.datecreated = dtSvc.serverDate
-        entity.recordlog.createdbyuserid = env.USERID
-        entity.recordlog.createdbyuser = env.FULLNAME
-        entity.recordlog.dateoflastupdate =  dtSvc.serverDate
-        entity.recordlog.lastupdatedbyuserid = env.USERID
-        entity.recordlog.lastupdatedbyuser = env.FULLNAME
-        
-        entity.ipcritems = []
-      
-        
-       
-        return entity;
-	}
     void addNode(parent){
     	em.changeNodeRight([myRight:parent.rgt]);
 		em.changeNodeLeft([myRight:parent.rgt]);
@@ -188,11 +174,7 @@ class TagabukidSIMService extends ActiveCrudListService {
 		}
 	
 	}
-
-
-
-
-
+	
 	void updateitemsipcr(o){
 		// println o.qualities
 		o.qualities.each{
@@ -401,8 +383,6 @@ class TagabukidSIMService extends ActiveCrudListService {
     public def saveSubAccount(o) {
     	return em.save( o );
     }
-
- 
 
     @ProxyMethod
     public def getSIByEmployeeOffice(o) {

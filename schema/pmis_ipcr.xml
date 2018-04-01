@@ -1,6 +1,7 @@
 <schema adapter="tagabukid_hrmis">
 	 <element tablename="pmis_ipcr"> 
-		<field name="objid" primary="true" prefix="IP"/>                         
+		<field name="objid" primary="true" prefix="IP"/>   
+		<field name="year" required="true" searchable="false" caption="Year" visible="false"/>                  
 		<field name="period" required="true" searchable="false" caption="Period" visible="false"/>    
 		<field name="state" required="true" searchable="false" caption="State" visible="true"/>                      
 		<field name="ipcrno" required="true" searchable="true" caption="IPCR No." visible="true"/>                        

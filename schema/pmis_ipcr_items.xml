@@ -1,6 +1,6 @@
 <schema adapter="tagabukid_hrmis">
 	 <element tablename="pmis_ipcr_items">
-		<field name="objid" primary="true" prefix="IPD" />
+		<field name="objid" primary="true" prefix="IPI" />
 		<field name="ipcrid" requierd="true" />
 		<field name="successindicatorid" requierd="true" />
 		<field name="qid" />

@@ -3,9 +3,9 @@
 		<field name="objid" primary="true" prefix="IPBI"/> 
 		<field name="parentid" required="true" /> 
 		<field name="behavioralid" required="true" /> 
-		<field name="rating"  required="true"/> 
+		<field name="rating" /> 
 		<field name="remarks" /> 
-		<complex name="parent" ref="pmis_ipcr_behavioral" jointype="many-to-one" includefields="objid,type" required="false">
+		<complex name="parentbehavioraltype" ref="pmis_ipcr_behavioral" jointype="many-to-one" includefields="objid,type" required="false">
 			<key field="parentid" target="objid" />
 		</complex>
 	</element>
