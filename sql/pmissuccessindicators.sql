@@ -402,15 +402,19 @@ ORDER BY dp.code
 SELECT 
   mfo.objid AS mfoid,
   mfo.title AS mfotitle,
+  mfo.code AS mfocode,
   mfo.type AS mfotype,
   op.objid AS opid,
   op.title AS optitle,
+  op.code AS opcode,
   op.type AS optype,
   dp.objid AS dpid,
   dp.title AS dptitle,
+  dp.code AS dpcode,
   dp.type AS dptype,
   ip.objid AS successindicator_objid,
   ip.title AS successindicator_title,
+  ip.code AS successindicator_code,
   ip.type AS successindicator_type,
   r.objid AS r_objid,
   r.title AS r_title,
@@ -423,7 +427,7 @@ INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
 INNER JOIN pmis_ratings r ON r.`siid` = ip.`objid`
 WHERE o.orgid = $P{orgid}
-ORDER BY dp.code
+ORDER BY mfo.code,op.code,dp.code,ip.code
 
 [getIPCRByDPCR]
 SELECT * FROM pmis_successindicators

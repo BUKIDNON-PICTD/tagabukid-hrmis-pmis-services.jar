@@ -23,41 +23,51 @@ class TagabukidPMISReportService
 	@ProxyMethod
 	public def getRatingStandardforIPCR(params){
 		def data = [:]
-	
-		def mfolist = em.getSIByOrgId( [orgid:params.org.org.objid] );
-		mfolist = mfolist.groupBy({[id:it.mfoid,title:it.mfotitle]}).collect{k,v->
+	    
+		def mfolist = em.getSIByOrgId( [orgid:params.org.OrgUnitId] );
+		// println mfolist
+		mfolist = mfolist.groupBy({[id:it.mfoid,title:it.mfotitle,code:it.mfocode]}).collect{k,v->
 		     [
 		        mfoid   :k.id,
 		        mfotitle:k.title,
-		        opcrlist:v.groupBy({[id:it.opid,title:it.optitle]}).collect{a,b->
+		        mfocode:k.code,
+		        opcrlist:v.groupBy({[id:it.opid,title:it.optitle,code:it.opcode]}).collect{a,b->
 		               [ 
 		                opid    :a.id,
 		                optitle :a.title,
-		                dpcrlist:b.groupBy({[id:it.dpid,title:it.dptitle]}).collect{q,w->
+		                opcode :a.code,
+		                dpcrlist:b.groupBy({[id:it.dpid,title:it.dptitle,code:it.dpcode]}).collect{q,w->
 		                       [ 
 		                        dpid    :q.id,
 		                        dptitle :q.title,
-		                        ipcrlist:w.groupBy({[id:it.successindicator.objid,title:it.successindicator.title]}).collect{t,y->
-	                                [    ipid    :t.id,
-                                		 iptitle :t.title,
-                                		 ratingitems: y.groupBy({[typeid:it.r.type]}).collect{u,i->
-                                		 	[
-                                		 	typeid:u.typeid,
-                                		 	items:i.r
-                                		 	]
-                                		 }
-                                    ]}
+		                        dpcode :q.code,
+		                        ipcrlist:w.groupBy({[id:it.successindicator.objid,title:it.successindicator.title,code:it.successindicator.code]}).collect{t,y->
+	                                [    
+	                                	ipid    :t.id,
+	                            		iptitle :t.title,
+	                            		ipcode :t.code,
+	                            		ratingitems: y.r.groupBy({
+                                                    it.rating
+                                        }).collect{u,i->
+                                            [
+                                                rating:u,
+                                                qtitle:i.find{it.type == 'Q'}.title,
+                                                etitle:i.find{it.type == 'E'}.title,
+                                                ttitle:i.find{it.type == 'T'}.title
+                                            ]
+                                        }.sort{-it.rating}
+                                    ]}.sort{it.ipcode}
 		                       ]
-		                 }
+		                 }.sort{it.dpcode}
 		               ]
-		         }
+		         }.sort{it.opcode}
 		     ]   
-		}
-		// def dpcrlist = mfolist.groupBy({[id:it.dpid,title:it.dptitle]}).collect{q,w->
+		}.sort{it.mfocode}
+		// def dpcrlist = mfolist.groupBy({[id:it.dpid,title:it.dptitle,code:it.dptitle.code]}).collect{q,w->
   //                              [ 
   //                               dpid    :q.id,
   //                               dptitle :q.title,
-  //                               ipcrlist:w.groupBy({[id:it.successindicator.objid,title:it.successindicator.title]}).collect{t,y->
+  //                               ipcrlist:w.groupBy({[id:it.successindicator.objid,title:it.successindicator,code:it.successindicator.code.title]}).collect{t,y->
   //                                   [    ipid    :t.id,
   //                               		 iptitle :t.title,
   //                               		 ratingitems: y.groupBy({[typeid:it.r.type]}).collect{u,i->
@@ -69,14 +79,14 @@ class TagabukidPMISReportService
   //                                   ]}
   //                              ]
   //                        }
-		// println dpcrlist
+		// println mfolist
 		data.reportdata = mfolist;
 	
 		data.parameters = [
 			TITLE  :"Rating Standard for IPCR",
 			PERIOD :params.period,
 			// USERORG:dtssvc.getUserOrg(env.USERID).org.name,
-			OFFICE :params.org.org.name,
+			OFFICE :params.org.Entity.Name,
 			// DOCTYPE:(params.documenttype ?  params.documenttype.name : "ALL"),
 			// STATE  : null,
 			// USERFULLNAME: (params.encoder ? params.encoder.fullname :  'ALL'),
