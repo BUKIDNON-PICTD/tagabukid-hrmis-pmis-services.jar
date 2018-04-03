@@ -159,10 +159,11 @@ class TagabukidIPCRService extends ActiveCrudListService
 		//          }
 		//      ]   
 		// }
-		def dpcrlist = mfolist.groupBy({[id:it.dpid,title:it.dptitle]}).collect{q,w->
+		def dpcrlist = mfolist.groupBy({[id:it.dpid,title:it.dptitle,code:it.dpcode]}).collect{q,w->
                                [ 
                                 dpid    :q.id,
                                 dptitle :q.title,
+                                dpcode  :q.code,
                                 ipcrlist:w.collect{[
                                         successindicator:it.successindicator,
                                         q:it.q,

@@ -337,35 +337,45 @@ WHERE xxx."ProfileId" = ${ProfileId}
 
 [getSIByEmployeeOffice]
 SELECT DISTINCT
+mfo.objid AS mfoid,
+mfo.title AS mfotitle,
+mfo.code as mfocode,
+mfo.type AS mfotype,
 op.objid AS opid,
 op.title AS optitle,
+op.code as opcode,
 op.type AS optype,
 dp.objid AS dpid,
 dp.title AS dptitle,
+dp.code as dpcode,
 dp.type AS dptype,
 o.orgid,org.Entity_Name AS orgname
-FROM pmis_successindicators op
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
-INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
 INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
 WHERE o.orgid = $P{orgid}
-AND op.type = 'op'
+AND mfo.type = 'mfo'
 ORDER BY dp.code
 
 [getSIByIPCRId]
 SELECT 
   mfo.objid AS mfoid,
   mfo.title AS mfotitle,
+  mfo.code AS mfocode,
   mfo.type AS mfotype,
   op.objid AS opid,
   op.title AS optitle,
+  op.code AS opcode,
   op.type AS optype,
   dp.objid AS dpid,
   dp.title AS dptitle,
+  dp.code AS dpcode, 
   dp.type AS dptype,
   ip.objid AS successindicator_objid,
   ip.title AS successindicator_title,
+  ip.code AS successindicator_code,
   ip.type AS successindicator_type,
   prq.objid AS q_objid,
   prq.title AS q_title,
@@ -386,6 +396,33 @@ LEFT JOIN pmis_ratings prt ON prt.objid = id.tid
 LEFT JOIN pmis_ratings pre ON pre.objid = id.eid
 WHERE mfo.type = 'mfo'
 AND id.ipcrid = $P{ipcrid}
+ORDER BY dp.code
+
+[getSIByOrgId]
+SELECT 
+  mfo.objid AS mfoid,
+  mfo.title AS mfotitle,
+  mfo.type AS mfotype,
+  op.objid AS opid,
+  op.title AS optitle,
+  op.type AS optype,
+  dp.objid AS dpid,
+  dp.title AS dptitle,
+  dp.type AS dptype,
+  ip.objid AS successindicator_objid,
+  ip.title AS successindicator_title,
+  ip.type AS successindicator_type,
+  r.objid AS r_objid,
+  r.title AS r_title,
+  r.rating AS r_rating,
+  r.type AS r_type
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN pmis_ratings r ON r.`siid` = ip.`objid`
+WHERE o.orgid = $P{orgid}
 ORDER BY dp.code
 
 [getIPCRByDPCR]
@@ -448,6 +485,7 @@ SELECT * FROM pmis_ratings WHERE siid = $P{siid} AND `type` = $P{type} ORDER by 
 SELECT objid,title,`type`,recordlog_datecreated as datecreated,recordlog_createdbyuser as createdby
 FROM pmis_successindicators 
 WHERE title LIKE $P{title}
+AND objid <> $P{objid}
 ORDER BY title
 
 [getBehavioralTypes]

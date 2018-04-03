@@ -21,12 +21,13 @@ class TagabukidPMISSuccessIndicatorTitleVerificationService {
 		//get the first 2 letters for query and then apply jarowinkler.
 		def m = [:];
 		m._limit = 1000;
-		m.title = o.substring(0,numChars) + "%";
+		m.title = o.title.substring(0,numChars) + "%";
+		m.objid = o.objid
 		def list = em.getListForVerification(m);
 		// println list
 		int i = 0;
 		def matchList = [];
-		def tdname = o.replaceAll("\\s{1,}", "");
+		def tdname = o.title.replaceAll("\\s{1,}", "");
         for(it in list) {
             def wt = jw.compare( tdname, it.title.replaceAll("\\s{1,}","") );
             if( wt  >= wtThreshold) {

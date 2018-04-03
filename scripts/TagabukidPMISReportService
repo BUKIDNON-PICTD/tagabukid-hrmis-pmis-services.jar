@@ -23,18 +23,60 @@ class TagabukidPMISReportService
 	@ProxyMethod
 	public def getRatingStandardforIPCR(params){
 		def data = [:]
-
-		data.reportdata = [
-			name:"TEST",
-			age:100,
-			period:params.period
-		];
-
+	
+		def mfolist = em.getSIByOrgId( [orgid:params.org.org.objid] );
+		mfolist = mfolist.groupBy({[id:it.mfoid,title:it.mfotitle]}).collect{k,v->
+		     [
+		        mfoid   :k.id,
+		        mfotitle:k.title,
+		        opcrlist:v.groupBy({[id:it.opid,title:it.optitle]}).collect{a,b->
+		               [ 
+		                opid    :a.id,
+		                optitle :a.title,
+		                dpcrlist:b.groupBy({[id:it.dpid,title:it.dptitle]}).collect{q,w->
+		                       [ 
+		                        dpid    :q.id,
+		                        dptitle :q.title,
+		                        ipcrlist:w.groupBy({[id:it.successindicator.objid,title:it.successindicator.title]}).collect{t,y->
+	                                [    ipid    :t.id,
+                                		 iptitle :t.title,
+                                		 ratingitems: y.groupBy({[typeid:it.r.type]}).collect{u,i->
+                                		 	[
+                                		 	typeid:u.typeid,
+                                		 	items:i.r
+                                		 	]
+                                		 }
+                                    ]}
+		                       ]
+		                 }
+		               ]
+		         }
+		     ]   
+		}
+		// def dpcrlist = mfolist.groupBy({[id:it.dpid,title:it.dptitle]}).collect{q,w->
+  //                              [ 
+  //                               dpid    :q.id,
+  //                               dptitle :q.title,
+  //                               ipcrlist:w.groupBy({[id:it.successindicator.objid,title:it.successindicator.title]}).collect{t,y->
+  //                                   [    ipid    :t.id,
+  //                               		 iptitle :t.title,
+  //                               		 ratingitems: y.groupBy({[typeid:it.r.type]}).collect{u,i->
+  //                               		 	[
+  //                               		 	typeid:u.typeid,
+  //                               		 	items:i.r
+  //                               		 	]
+  //                               		 }
+  //                                   ]}
+  //                              ]
+  //                        }
+		// println dpcrlist
+		data.reportdata = mfolist;
+	
 		data.parameters = [
 			TITLE  :"Rating Standard for IPCR",
-			// PERIOD :params.strperiod,
+			PERIOD :params.period,
 			// USERORG:dtssvc.getUserOrg(env.USERID).org.name,
-			// OFFICE :params.orgname,
+			OFFICE :params.org.org.name,
 			// DOCTYPE:(params.documenttype ?  params.documenttype.name : "ALL"),
 			// STATE  : null,
 			// USERFULLNAME: (params.encoder ? params.encoder.fullname :  'ALL'),
