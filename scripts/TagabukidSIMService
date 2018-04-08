@@ -493,5 +493,9 @@ class TagabukidSIMService extends ActiveCrudListService {
     // 	}
     // }
 
+    @ProxyMethod
+    public def changeParent(o) {
+    	return em.changeParent( o );
+    }
 
 }

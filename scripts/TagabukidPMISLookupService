@@ -45,6 +45,12 @@ public class TagabukidPMISLookupService
 		return util.lookupPostgreHrmis( 'pmissuccessindicators:getProfile', params,'PersonId' ) //lookup for employee
 	}
 
+	// @ProxyMethod
+	// public def lookupDPCR( params ) {
+	// 	def dprc = util.lookuphrmis( 'pmissuccessindicators:getDPCRByOrg', params,'orgid' )
+	// 	return dprc
+	// }
+
 	@ProxyMethod
 	public def lookupIPCR( params ) {
 		def ipcr = util.lookuphrmis( 'pmissuccessindicators:getIPCRByDPCR', params,'objid' )

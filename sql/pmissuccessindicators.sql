@@ -195,10 +195,9 @@ LEFT JOIN pmis_successindicators p ON a.parentid = p.objid
 WHERE a.objid=$P{objid}
 
 [getLookup]
-SELECT CONCAT( REPEAT( '-', (COUNT(parent.title) - 1) ), node.title) AS location,node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
-FROM pmis_successindicators AS node,
-        pmis_successindicators AS parent
-WHERE (node.lft BETWEEN parent.lft AND parent.rgt) AND node.orgid = $P{orgid} AND node.type <> 'document'
+SELECT node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
+FROM pmis_successindicators AS node
+WHERE node.type = $P{type}
 GROUP BY node.title
 ORDER BY node.lft
 
@@ -361,6 +360,13 @@ ORDER BY dp.code
 
 [getSIByIPCRId]
 SELECT 
+  id.objid,
+  id.ipcrid,
+  id.successindicatorid,
+  id.qid,
+  id.tid,
+  id.eid,
+  id.remarks,
   mfo.objid AS mfoid,
   mfo.title AS mfotitle,
   mfo.code AS mfocode,
@@ -494,3 +500,22 @@ ORDER BY title
 
 [getBehavioralTypes]
 SELECT * FROM pmis_behavioral ORDER BY `type`, `sortorder`
+
+[getBehavioralRatingList]
+SELECT bi.*,
+b.`name`,
+b.`description`,
+b.`sortorder`,
+b.`successindicator`,
+b.`type`
+FROM pmis_ipcr_behavioral_items bi
+INNER JOIN pmis_behavioral b ON b.objid = bi.behavioralid 
+WHERE bi.parentid = $P{parentid}
+ORDER BY b.name,b.type
+
+[removeIPCRItem]
+DELETE FROM pmis_ipcr_items WHERE objid = $P{objid}
+
+[changeParent]
+UPDATE pmis_successindicators SET parentid=$P{parentid} WHERE 
+objid=$P{objid}

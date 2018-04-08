@@ -3,7 +3,8 @@ import com.rameses.common.*;
 import com.rameses.services.extended.*;
 
 
-class TagabukidIPCRService extends ActiveCrudListService 
+// class TagabukidIPCRService extends ActiveCrudListService 
+class TagabukidIPCRService
 {
 	@ActiveDB(value='pmissuccessindicators')
 	def emmain;
@@ -87,6 +88,28 @@ class TagabukidIPCRService extends ActiveCrudListService
 
 	}
 
+	// @ProxyMethod
+ //    public void beforeOpen(o) {
+ //    	println getSubSchemaName()
+ //    }
+
+
+    // void afterOpen(o) {
+    // 	println "TEST"*50
+    // 	o.dpcrlist = getDPCRByIPCRId(o.objid);
+    //     o.behavioraltypelist.each{ 
+    //        it.bahavioralratinglist = getBehavioralRatingList(it.objid);
+    //     }
+    // }
+
+    // void beforeCreate(o) {
+    // 	println o
+    // }
+
+    // void beforeUpdate(o) {
+    // 	println o
+    // }
+
 	@ProxyMethod
     public def getBahavioralRating(o){
 		return em.getBehavioral ( [type:o]).each{
@@ -102,6 +125,7 @@ class TagabukidIPCRService extends ActiveCrudListService
     		it.objid = 'DPCR' + new java.rmi.server.UID();
     		it.ipcrlist = []
     	}
+    	println dpcrlist
     	return dpcrlist;
     }
 
@@ -135,7 +159,7 @@ class TagabukidIPCRService extends ActiveCrudListService
     	def mfolist = em.getSIByIPCRId( [ipcrid:o] );
     	// println mfolist
     	// println dpcrlist.groupBy{it.dpid}
-	 // 	mfolist = mfolist.groupBy({[id:it.mfoid,title:it.mfotitle]}).collect{k,v->
+	 	// mfolist = mfolist.groupBy({[id:it.mfoid,title:it.mfotitle]}).collect{k,v->
 		//      [
 		//         mfoid   :k.id,
 		//         mfotitle:k.title,
@@ -165,6 +189,13 @@ class TagabukidIPCRService extends ActiveCrudListService
                                 dptitle :q.title,
                                 dpcode  :q.code,
                                 ipcrlist:w.collect{[
+                                		objid: it.objid,
+										ipcrid: it.ipcrid,
+										successindicatorid: it.successindicatorid,
+										qid: it.qid,
+										tid: it.tid,
+										eid: it.eid,
+										remarks: it.remarks,
                                         successindicator:it.successindicator,
                                         q:it.q,
                                         e:it.e,
@@ -173,5 +204,15 @@ class TagabukidIPCRService extends ActiveCrudListService
                                ]
                          }
     	return dpcrlist;
+    }
+
+    @ProxyMethod
+    public def getBehavioralRatingList(o) {
+		return em.getBehavioralRatingList([parentid:o]);
+    }
+
+     @ProxyMethod
+    public def removeIPCRItem(o) {
+		return em.removeIPCRItem(o);
     }
 }

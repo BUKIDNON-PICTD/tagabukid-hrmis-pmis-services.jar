@@ -2,11 +2,15 @@
 	 <element tablename="pmis_ipcr_behavioral_items">
 		<field name="objid" primary="true" prefix="IPBI"/> 
 		<field name="parentid" required="true" /> 
+		<!-- <complex name="parent" ref="pmis_ipcr_behavioral" jointype="many-to-one" required="false">
+			<key field="parentid" target="objid" />
+		</complex> -->
 		<field name="behavioralid" required="true" /> 
 		<field name="rating" /> 
 		<field name="remarks" /> 
-		<complex name="parentbehavioraltype" ref="pmis_ipcr_behavioral" jointype="many-to-one" includefields="objid,type" required="false">
-			<key field="parentid" target="objid" />
-		</complex>
+
+		<!-- <complex name="behavioral" ref="pmis_behavioral" jointype="one-to-one" required="false">
+			<key field="behavioralid" target="objid" />
+		</complex> -->
 	</element>
 </schema>

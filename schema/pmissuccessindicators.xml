@@ -10,8 +10,8 @@
 		<field name="remarks" />
 		<field name="parentid" />
 		<field name="type" />
-		<field name="lft" required="true" />
-		<field name="rgt" required="true" />
+		<field name="lft"/>
+		<field name="rgt"/>
 		<field name="quantity"/>
 	</element>
 
