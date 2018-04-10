@@ -98,6 +98,98 @@ class TagabukidPMISReportService
 	}
 
 	@ProxyMethod
+	public def getPCRF(params){
+		def data = [:]
+		def items = [];
+
+		if(params.type =='MFO'){
+			params.title = 'Major Final Output (MFO)'
+			items = em.getMFO();
+
+		}else if(params.type == 'OPCR'){
+			params.title = 'Office Performance Commitment and Review Form (OPCR)'
+			items = em.getSIByOrgId( [orgid:params.org.OrgUnitId] ).groupBy({[id:it.mfoid,title:it.mfotitle,code:it.mfocode]}).collect{k,v->
+			 [
+			    mfoid   :k.id,
+			    mfotitle:k.title,
+			    mfocode:k.code,
+			    opcrlist:v.groupBy({[id:it.opid,title:it.optitle,code:it.opcode]}).collect{a,b->
+			           [ 
+			            opid    :a.id,
+			            optitle :a.title,
+			            opcode :a.code
+			           ]
+			     }.sort{it.opcode}
+			 ]   
+			}.sort{it.mfocode}
+		}else if(params.type == 'DPCR'){
+			params.title = 'Department Performance Commitment and Review Form (DPCR)'
+			items = em.getSIByOrgId( [orgid:params.org.OrgUnitId] ).groupBy({[id:it.mfoid,title:it.mfotitle,code:it.mfocode]}).collect{k,v->
+			 [
+			    mfoid   :k.id,
+			    mfotitle:k.title,
+			    mfocode:k.code,
+			    opcrlist:v.groupBy({[id:it.opid,title:it.optitle,code:it.opcode]}).collect{a,b->
+			           [ 
+			            opid    :a.id,
+			            optitle :a.title,
+			            opcode :a.code,
+			            dpcrlist:b.groupBy({[id:it.dpid,title:it.dptitle,code:it.dpcode]}).collect{q,w->
+			                   [ 
+			                    dpid    :q.id,
+			                    dptitle :q.title,
+			                    dpcode :q.code
+			                   ]
+			             }.sort{it.dpcode}
+			           ]
+			     }.sort{it.opcode}
+			 ]   
+			}.sort{it.mfocode}
+		}else{
+			params.title = 'Individual Performance Commitment and Review Form (IPCR)'
+			items = em.getSIByOrgId( [orgid:params.org.OrgUnitId] ).groupBy({[id:it.mfoid,title:it.mfotitle,code:it.mfocode]}).collect{k,v->
+			 [
+			    mfoid   :k.id,
+			    mfotitle:k.title,
+			    mfocode:k.code,
+			    opcrlist:v.groupBy({[id:it.opid,title:it.optitle,code:it.opcode]}).collect{a,b->
+			           [ 
+			            opid    :a.id,
+			            optitle :a.title,
+			            opcode :a.code,
+			            dpcrlist:b.groupBy({[id:it.dpid,title:it.dptitle,code:it.dpcode]}).collect{q,w->
+			                   [ 
+			                    dpid    :q.id,
+			                    dptitle :q.title,
+			                    dpcode :q.code,
+		                        ipcrlist:w.groupBy({[id:it.successindicator.objid,title:it.successindicator.title,code:it.successindicator.code]}).collect{t,y->
+	                                [    
+	                                	ipid    :t.id,
+	                            		iptitle :t.title,
+	                            		ipcode :t.code
+                                    ]}.sort{it.ipcode}
+		                       ]
+			             }.sort{it.dpcode}
+			           ]
+			     }.sort{it.opcode}
+			 ]   
+			}.sort{it.mfocode}
+		}
+		
+		println items
+		data.reportdata = items;
+
+		data.parameters = [
+				TITLE  :params.title,
+				PERIOD :params.strperiod,
+				OFFICE :params.org,
+			]
+
+		return data
+
+	}
+
+	@ProxyMethod
 	public def getIPCRByEmployee(params){
 		
 
@@ -130,11 +222,11 @@ class TagabukidPMISReportService
 	}
 
 
-	@ProxyMethod
-	public def getEmployee(){
-		return emorg.getEmployee([searchtext:'%'])
+	// @ProxyMethod
+	// public def getEmployee(){
+	// 	return emorg.getEmployee([searchtext:'%'])
 
-	}
+	// }
 
 	// @ProxyMethod
 	// public def getOffice(){

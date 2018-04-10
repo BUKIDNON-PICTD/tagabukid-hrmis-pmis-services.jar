@@ -198,6 +198,7 @@ WHERE a.objid=$P{objid}
 SELECT node.title, node.objid,node.`parentid`,node.`state`,node.`code`,node.`type`,node.`lft`,node.`rgt`
 FROM pmis_successindicators AS node
 WHERE node.type = $P{type}
+AND title LIKE $P{searchtext}
 GROUP BY node.title
 ORDER BY node.lft
 
@@ -408,18 +409,38 @@ ORDER BY dp.code
 SELECT 
   mfo.objid AS mfoid,
   mfo.title AS mfotitle,
+  mfo.description AS mfodecription,
+  mfo.allotedbudget AS mfoallotedbudget,
+  mfo.quantity AS mfoquantity,
+  mfo.actualaccomplishment AS mfoactualaccomplishment,
+  mfo.remarks AS mforemarks,
   mfo.code AS mfocode,
   mfo.type AS mfotype,
   op.objid AS opid,
   op.title AS optitle,
+  op.description AS opdecription,
+  op.allotedbudget AS opallotedbudget,
+  op.quantity AS opquantity,
+  op.actualaccomplishment AS opactualaccomplishment,
+  op.remarks AS opremarks,
   op.code AS opcode,
   op.type AS optype,
   dp.objid AS dpid,
   dp.title AS dptitle,
+  dp.description AS dpdecription,
+  dp.allotedbudget AS dpallotedbudget,
+  dp.quantity AS dpquantity,
+  dp.actualaccomplishment AS dpactualaccomplishment,
+  dp.remarks AS dpremarks,
   dp.code AS dpcode,
   dp.type AS dptype,
   ip.objid AS successindicator_objid,
   ip.title AS successindicator_title,
+  ip.description AS successindicator_decription,
+  ip.allotedbudget AS successindicator_allotedbudget,
+  ip.quantity AS successindicator_quantity,
+  ip.actualaccomplishment AS successindicator_actualaccomplishment,
+  ip.remarks AS successindicator_remarks,
   ip.code AS successindicator_code,
   ip.type AS successindicator_type,
   r.objid AS r_objid,
@@ -519,3 +540,18 @@ DELETE FROM pmis_ipcr_items WHERE objid = $P{objid}
 [changeParent]
 UPDATE pmis_successindicators SET parentid=$P{parentid} WHERE 
 objid=$P{objid}
+
+[getMFO]
+SELECT 
+  mfo.objid AS mfoid,
+  mfo.title AS mfotitle,
+  mfo.description AS mfodecription,
+  mfo.allotedbudget AS mfoallotedbudget,
+  mfo.quantity AS mfoquantity,
+  mfo.actualaccomplishment AS mfoactualaccomplishment,
+  mfo.remarks AS mforemarks,
+  mfo.code AS mfocode,
+  mfo.type AS mfotype
+FROM pmis_successindicators mfo
+WHERE mfo.type = 'mfo'
+ORDER BY mfo.code

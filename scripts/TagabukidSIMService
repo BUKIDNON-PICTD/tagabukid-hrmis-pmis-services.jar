@@ -356,6 +356,9 @@ class TagabukidSIMService extends ActiveCrudListService {
 		if( p._tag ) {
 			p._listMethod = "getLookup";
 			p.type = p._tag;
+			println p.searchtext
+			p.searchtext = (p.searchtext ? p.searchtext += '%':'%')
+			println p
 			if(!p.parentid) p.parentid = '%';
 		}
 		// println p

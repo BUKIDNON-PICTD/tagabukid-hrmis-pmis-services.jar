@@ -3,7 +3,7 @@
 		<field name="objid" primary="true" />
 		<field name="state" required="true" />
 		<field name="title" required="true" />
-		<field name="description" required="true" />
+		<field name="description" />
 		<field name="code" />
 		<field name="allotedbudget" />
 		<field name="actualaccomplishment" />
