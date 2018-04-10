@@ -216,6 +216,7 @@ class TagabukidSIMService extends ActiveCrudListService {
 		}
 
 		list.each { 
+			it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
 			if (o.root) it.folder = true;
 			it.caption = it.code + " - " + it.title;
 			it.filetype = "sim-"+it.type;
@@ -259,7 +260,7 @@ class TagabukidSIMService extends ActiveCrudListService {
 		//list.removeAll( list.findAll{it.orgid != orgid && it.orgid != 'ROOT'} );
 
 		list.each { 
-			// it.orgs = em.getSuccessIndicatorOrg([xxx:it.objid])
+			
 			if(selectedNode.root == true) {
 				it.folder = true;
 			}	
@@ -294,11 +295,11 @@ class TagabukidSIMService extends ActiveCrudListService {
 			}
 			
 		}
-
+		println list
 		
 		// if (selectedNode.type == 'mfo'){
 		// 	list = list.findAll{it.orgs.find{it.orgid == orgid}}
-		// 	println list
+			// println list
 		// }
 
 	}
@@ -372,7 +373,7 @@ class TagabukidSIMService extends ActiveCrudListService {
 			it.filetype = 'sim-'+it.type;
 
 		}
-	
+		// println list
 
 	}
 
