@@ -93,4 +93,10 @@ public class TagabukidPMISLookupService
 		return util.lookuphrmis( 'pmissuccessindicators:getSuccessIndicatorRatingBaseline', params,'objid' )
 	}
 
+	@ProxyMethod
+	public def lookupRatingBaselineMaster( params ) {
+		return util.lookuphrmis( 'pmissuccessindicators:getRatingBaselineMaster', params,'objid' )
+	}
+
+
 }

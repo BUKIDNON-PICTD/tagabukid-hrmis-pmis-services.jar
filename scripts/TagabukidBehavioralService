@@ -11,8 +11,6 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 	@ActiveDB(value='pmissuccessindicator', em='tagabukid_hrmis')
 	def em
 
-	// @ActiveDB(value='subaydocumenttype', em='postgrereferences')
-	// def empostref
 
 	@Env
 	def env;
@@ -41,32 +39,12 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 
 	@ProxyMethod
 	def initCreate(){
-		
 		def entity = [:];
 		entity.objid = 'b' + new java.rmi.server.UID();
 		entity.state = 'DRAFT';
-        //entity.org = [:]
-		//entity.recordlog = [:]
-		//entity.recordlog.datecreated = dtSvc.serverDate
-        //entity.recordlog.createdbyuserid = env.USERID
-       	//entity.recordlog.createdbyuser = env.FULLNAME
-        //entity.recordlog.dateoflastupdate =  dtSvc.serverDate
-        //entity.recordlog.lastupdatedbyuserid = env.USERID
-        //entity.recordlog.lastupdatedbyuser = env.FULLNAME
-       	 entity.items = []
-      
-        
-       
+       	entity.items = []
         return entity;
-
 	}
-
-
-	// @ProxyMethod
-	// public def getList( params ) {
-	// 	beforeList(params)
-	// 	return em.getList(params)
-	// } 
 
 
 	@ProxyMethod
@@ -74,98 +52,5 @@ class TagabukidBehavioralService extends ActiveCrudNodeService
 		return em.findById([objid:objid])
 	}
 
-
-	// @Async
-	// @ProxyMethod
-	// public def exportData(params) {
-	// 	return [
-	// 		filetype: 'DocumentType',
-	// 		ordinancecategories: getLists([:])
-	// 	] 
-	// }
-
-	@Async
-	@ProxyMethod
-	public def importData( data ) {
-		if (data.filetype != 'DocumentType')
-			throw new Exception('Invalid data.')
-		data.DocumentType.each{
-			save(it)
-		}
-	}
-
-
-
-	// void afterCreate(o){
-	// 	saveitems(o);
-	// }
-
-	// void afterUpdate(o){
-	// 	saveitems(o);
-	// }
-
-	// void saveitems(o){
-	// 	def oldDocumentTypeOrg = em.getDocumentTypeOrg([objid:o.objid])
-
-	// 	if (!o.org)
-	// 		o.org = []
-
-	// 	def deletedDocumentTypeOrg = oldDocumentTypeOrg - o.org 
-	// 	def newDocumentTypeOrg 		= o.org - oldDocumentTypeOrg
-
-	// 	deletedDocumentTypeOrg.each{
-	// 		em.deleteDocumentTypeOrg([objid:o.objid, organizationid:it.organizationid])
-	// 	}
-
-	// 	newDocumentTypeOrg.each{
-	// 		def neworg = [
-	// 			objid : o.objid,
-	// 			organizationid : it.OrgUnitId.toString()
-	// 		]
-	// 		em.create(neworg, 'subaydocumenttypeorg')
-	// 	}
-	// }
-
-	// @ProxyMethod
-	// public def deleteDocumentTypeOrg( item ) {
-	// 	em.delete(item, 'subaydocumenttypeorg')	
-	// }
-
-	// void beforeRemoveEntity(o){
-	// 	em.deleteAllDocumentTypeOrg(o);
-	// }
-
-
-
-
-	void beforeCreate(o){
-			
-			it.objid = 'b' + new java.rmi.server.UID();
-			it.state = 'DRAFT'
-		
-	}
-
-
-
-
-	// 	o.org = em.getDocumentTypeOrg([objid:o.objid])
-	// 	if(o.org ){
-	// 		//def org = empostref.getOrg([orgid:"('" + entity.organizationid.join("','") + "')"])
-	// 		println o.org
-	// 		o.org.each{ y ->
-	// 			def org = em.findOrgById([orgid:"'"+y.organizationid+"'"])
-	// 			y.OrgUnitId = org.OrgUnitId.toString()
-	// 			y.name = org.Entity.Name
-	// 			y.code = org.Entity.AcronymAbbreviation
-	// 		}
-	// 	}
-		}
-
-	// public def getMonthFirstDate( dt ) {
- //        Calendar cal = Calendar.getInstance();
- //        cal.setTime(dt);
- //        cal.set( Calendar.DAY_OF_MONTH, 1 );
- //        return dtSvc.format('yyyy-MM-dd', cal.getTime()) + " 00:00:00";
- //    }
-
+}
 

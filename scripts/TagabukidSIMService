@@ -15,6 +15,9 @@ class TagabukidSIMService extends ActiveCrudListService {
 	@ActiveDB(value='pmissuccessindicators', em='tagabukid_subay')
 	def emorg;
 
+	@ActiveDB(value='pmis_successindicators_rating', em='tagabukid_hrmis')
+	def emratingitem;
+
 	@Service('TagabukidSubayTransactionService')
 	def dtsSvc 
 
@@ -99,7 +102,10 @@ class TagabukidSIMService extends ActiveCrudListService {
 
 			if(o.type=='pmis'){
 				o.title = o.code;
+			}else{
+				o.code = getSICode(o.type);
 			}
+
     }
 
     public void afterCreate(o){
@@ -149,42 +155,86 @@ class TagabukidSIMService extends ActiveCrudListService {
 	void saveitemsipcr(o){
 		// println o
 		// em.deleteSuccessIndicatorRating([xxx:o.objid])	// one to many
+		// o.qualities.each{
+		// 	it.objid = 'QSI' + new java.rmi.server.UID();
+		// 	it.type = 'Q'
+		// 	it.objid = o.objid
+		// 	it.state = 'DRAFT'
+		// 	em.create(it, 'pmisrating')
+		// }
+		
+
+		// o.timeliness.each{
+		// 	it.objid = 'TSI' + new java.rmi.server.UID(); 
+		// 	it.type = 'T'
+		// 	it.siid = o.objid
+		// 	it.state = 'DRAFT'
+		// 	em.create(it, 'pmisrating')
+		// }
+		// o.efficiency.each{
+		// 	it.objid = 'ESI' + new java.rmi.server.UID();
+		// 	it.type = 'E'
+		// 	it.siid = o.objid
+		// 	it.state = 'DRAFT'
+		// 	em.create(it, 'pmisrating')
+		// }
+
 		o.qualities.each{
-			it.objid = 'QSI' + new java.rmi.server.UID();
-			it.type = 'Q'
-			it.siid = o.objid
-			it.state = 'DRAFT'
-			em.create(it, 'pmisrating')
+			it.ratingitemid = it.objid
+			it.objid = o.objid
+			emratingitem.create(it)
 		}
 		
 
 		o.timeliness.each{
-			it.objid = 'TSI' + new java.rmi.server.UID(); 
-			it.type = 'T'
-			it.siid = o.objid
-			it.state = 'DRAFT'
-			em.create(it, 'pmisrating')
+			it.ratingitemid = it.objid
+			it.objid = o.objid
+			emratingitem.create(it)
 		}
 		o.efficiency.each{
-			it.objid = 'ESI' + new java.rmi.server.UID();
-			it.type = 'E'
-			it.siid = o.objid
-			it.state = 'DRAFT'
-			em.create(it, 'pmisrating')
+			it.ratingitemid = it.objid
+			it.objid = o.objid
+			emratingitem.create(it)
 		}
 	
 	}
-	
+
+    public def getSICode(o){
+		def appcode = o.toUpper();
+		def prefix  = appcode+yr;
+		return prefix+seqSvc.getNextFormattedSeries(prefix);
+    }
+
 	void updateitemsipcr(o){
+		// println o
 		// println o.qualities
+		// o.qualities.each{
+		// 	em.update(it, 'pmisrating')
+		// }
+		// o.timeliness.each{
+		// 	em.update(it, 'pmisrating')
+		// }
+		// o.efficiency.each{
+		// 	em.update(it, 'pmisrating')
+		// }
+		em.deleteSIRating(o)
+
 		o.qualities.each{
-			em.update(it, 'pmisrating')
+			it.ratingitemid = it.objid
+			it.objid = o.objid
+			emratingitem.create(it)
 		}
+		
+
 		o.timeliness.each{
-			em.update(it, 'pmisrating')
+			it.ratingitemid = it.objid
+			it.objid = o.objid
+			emratingitem.create(it)
 		}
 		o.efficiency.each{
-			em.update(it, 'pmisrating')
+			it.ratingitemid = it.objid
+			it.objid = o.objid
+			emratingitem.create(it)
 		}
 	
 	}
@@ -295,7 +345,7 @@ class TagabukidSIMService extends ActiveCrudListService {
 			}
 			
 		}
-		println list
+		// println list
 		
 		// if (selectedNode.type == 'mfo'){
 		// 	list = list.findAll{it.orgs.find{it.orgid == orgid}}
@@ -321,10 +371,15 @@ class TagabukidSIMService extends ActiveCrudListService {
 	public def open(o) {
 		def x = em.findInfo(o);
 		if (o.type == 'ip'){
-			x.ratings = em.getSuccessIndicatorRatings([xxx:o.objid])
-			x.qualities = x.ratings.findAll{it.type=='Q'}
-			x.timeliness = x.ratings.findAll{it.type=='T'}
-			x.efficiency = x.ratings.findAll{it.type=='E'}
+			// x.ratings = em.getSuccessIndicatorRatings([xxx:o.objid])
+			// x.qualities = x.ratings.findAll{it.type=='Q'}
+			// x.timeliness = x.ratings.findAll{it.type=='T'}
+			// x.efficiency = x.ratings.findAll{it.type=='E'}
+
+			x.ratings = em.getSuccessIndicatorRatings2([xxx:o.objid])
+			x.qualities = x.ratings.findAll{it.type=='QUALITY'}.sort{-it.rating}
+			x.timeliness = x.ratings.findAll{it.type=='TIMELINESS'}.sort{-it.rating}
+			x.efficiency = x.ratings.findAll{it.type=='EFFICIENCY'}.sort{-it.rating}
 		}
 		else
 		{
@@ -357,9 +412,9 @@ class TagabukidSIMService extends ActiveCrudListService {
 		if( p._tag ) {
 			p._listMethod = "getLookup";
 			p.type = p._tag;
-			println p.searchtext
+			// println p.searchtext
 			p.searchtext = (p.searchtext ? p.searchtext += '%':'%')
-			println p
+			// println p
 			if(!p.parentid) p.parentid = '%';
 		}
 		// println p

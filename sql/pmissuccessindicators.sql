@@ -555,3 +555,14 @@ SELECT
 FROM pmis_successindicators mfo
 WHERE mfo.type = 'mfo'
 ORDER BY mfo.code
+
+[getRatingBaselineMaster]
+SELECT * FROM pmis_rating WHERE (name LIKE $P{searchtext} OR code LIKE $P{searchtext}) AND type = $P{type}  ORDER BY name
+
+[getSuccessIndicatorRatings2]
+SELECT ri.* FROM pmis_successindicators_rating sir 
+INNER JOIN pmis_rating_items ri ON ri.`objid` = sir.`ratingitemid`
+WHERE sir.`objid` = $P{xxx}
+
+[deleteSIRating]
+DELETE FROM pmis_successindicators_rating WHERE objid = $P{objid}

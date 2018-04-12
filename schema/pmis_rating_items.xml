@@ -1,0 +1,14 @@
+<schema adapter="tagabukid_hrmis">
+	 <element tablename="pmis_rating_items"> 
+		<field name="objid" primary ="true" prefix="PSRI"/>
+		<field name="parentid" required="true" />
+		<field name="type" searchable="true" required ="true" caption="Type"/>
+		<field name="title" searchable="true" required ="true" caption="Title"/>
+		<field name="code" searchable="true" caption="Code"/>
+		<field name="description" searchable="true" caption="Description"/>
+		<field name="rating" required="true" searchable="true" caption="Rating"/>
+		<complex name="parent" ref="pmis_rating" jointype="many-to-one" required="false">
+			<key field="parentid" target="objid" />
+		</complex>
+	</element>
+</schema>

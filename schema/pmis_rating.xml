@@ -1,0 +1,13 @@
+<schema adapter="tagabukid_hrmis">
+	 <element tablename="pmis_rating"> 
+		<field name="objid" primary ="true" prefix="PSIR"/>
+		<field name="state" required="true" visible="false"/>
+		<field name="name" searchable="true" required ="true" caption="Name"/>
+		<field name="code" searchable="true" caption="Code" visible="false"/>
+		<field name="description" searchable="true" caption="Description" visible="false"/>
+		<field name="type" required="true" searchable="true" caption="Type"/>
+		<complex name="items" ref="pmis_rating_items" jointype="one-to-many">
+			<key field="objid" target="parentid" /> 		
+		</complex>
+	</element>
+</schema>

@@ -1,0 +1,7 @@
+<schema adapter="tagabukid_hrmis">
+	 <element tablename="pmis_successindicators_rating"> 
+		<field name="objid" primary ="true"/>
+		<field name="ratingitemid" primary="true" />
+		
+	</element>
+</schema>
