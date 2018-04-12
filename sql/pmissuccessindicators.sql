@@ -353,6 +353,7 @@ o.orgid,org.Entity_Name AS orgname
 FROM pmis_successindicators mfo
 INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
 INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
 WHERE o.orgid = $P{orgid}
@@ -398,12 +399,59 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_ipcr_items id ON id.successindicatorid = ip.objid
+LEFT JOIN pmis_rating_items prq ON prq.objid = id.qid
+LEFT JOIN pmis_rating_items prt ON prt.objid = id.tid
+LEFT JOIN pmis_rating_items pre ON pre.objid = id.eid
+WHERE mfo.type = 'mfo'
+AND id.ipcrid = $P{ipcrid}
+ORDER BY dp.code
+
+[getSIByIPCRIdV1]
+SELECT 
+  id.objid,
+  id.ipcrid,
+  id.successindicatorid,
+  id.qid,
+  id.tid,
+  id.eid,
+  id.remarks,
+  mfo.objid AS mfoid,
+  mfo.title AS mfotitle,
+  mfo.code AS mfocode,
+  mfo.type AS mfotype,
+  op.objid AS opid,
+  op.title AS optitle,
+  op.code AS opcode,
+  op.type AS optype,
+  dp.objid AS dpid,
+  dp.title AS dptitle,
+  dp.code AS dpcode, 
+  dp.type AS dptype,
+  ip.objid AS successindicator_objid,
+  ip.title AS successindicator_title,
+  ip.code AS successindicator_code,
+  ip.type AS successindicator_type,
+  prq.objid AS q_objid,
+  prq.title AS q_title,
+  prq.rating AS q_rating,
+  prt.objid AS t_objid,
+  prt.title AS t_title,
+  prt.rating AS t_rating,
+  pre.objid AS e_objid,
+  pre.title AS e_title,
+  pre.rating AS e_rating
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_ipcr_items id ON id.successindicatorid = ip.objid
 LEFT JOIN pmis_ratings prq ON prq.objid = id.qid
 LEFT JOIN pmis_ratings prt ON prt.objid = id.tid
 LEFT JOIN pmis_ratings pre ON pre.objid = id.eid
 WHERE mfo.type = 'mfo'
 AND id.ipcrid = $P{ipcrid}
 ORDER BY dp.code
+
 
 [getSIByOrgId]
 SELECT 
@@ -563,6 +611,13 @@ SELECT * FROM pmis_rating WHERE (name LIKE $P{searchtext} OR code LIKE $P{search
 SELECT ri.* FROM pmis_successindicators_rating sir 
 INNER JOIN pmis_rating_items ri ON ri.`objid` = sir.`ratingitemid`
 WHERE sir.`objid` = $P{xxx}
+
+[lookupSuccessIndicatorRatingByType]
+SELECT ri.* FROM pmis_successindicators_rating sir 
+INNER JOIN pmis_rating_items ri ON ri.`objid` = sir.`ratingitemid`
+WHERE sir.`objid` = $P{ipid}
+AND ri.type = $P{type}
+AND (ri.title LIKE $P{searchtext} OR ri.rating LIKE $P{searchtext})
 
 [deleteSIRating]
 DELETE FROM pmis_successindicators_rating WHERE objid = $P{objid}
