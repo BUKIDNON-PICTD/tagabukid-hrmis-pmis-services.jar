@@ -491,6 +491,58 @@ SELECT
   ip.remarks AS successindicator_remarks,
   ip.code AS successindicator_code,
   ip.type AS successindicator_type,
+  ri.objid AS r_objid,
+  ri.title AS r_title,
+  ri.rating AS r_rating,
+  ri.type AS r_type
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+INNER JOIN pmis_successindicators_rating r ON r.objid = ip.objid
+INNER JOIN pmis_rating_items ri ON ri.objid = r.ratingitemid
+WHERE o.orgid = $P{orgid}
+ORDER BY mfo.code,op.code,dp.code,ip.code
+
+[getSIByOrgIdv1]
+SELECT 
+  mfo.objid AS mfoid,
+  mfo.title AS mfotitle,
+  mfo.description AS mfodecription,
+  mfo.allotedbudget AS mfoallotedbudget,
+  mfo.quantity AS mfoquantity,
+  mfo.actualaccomplishment AS mfoactualaccomplishment,
+  mfo.remarks AS mforemarks,
+  mfo.code AS mfocode,
+  mfo.type AS mfotype,
+  op.objid AS opid,
+  op.title AS optitle,
+  op.description AS opdecription,
+  op.allotedbudget AS opallotedbudget,
+  op.quantity AS opquantity,
+  op.actualaccomplishment AS opactualaccomplishment,
+  op.remarks AS opremarks,
+  op.code AS opcode,
+  op.type AS optype,
+  dp.objid AS dpid,
+  dp.title AS dptitle,
+  dp.description AS dpdecription,
+  dp.allotedbudget AS dpallotedbudget,
+  dp.quantity AS dpquantity,
+  dp.actualaccomplishment AS dpactualaccomplishment,
+  dp.remarks AS dpremarks,
+  dp.code AS dpcode,
+  dp.type AS dptype,
+  ip.objid AS successindicator_objid,
+  ip.title AS successindicator_title,
+  ip.description AS successindicator_decription,
+  ip.allotedbudget AS successindicator_allotedbudget,
+  ip.quantity AS successindicator_quantity,
+  ip.actualaccomplishment AS successindicator_actualaccomplishment,
+  ip.remarks AS successindicator_remarks,
+  ip.code AS successindicator_code,
+  ip.type AS successindicator_type,
   r.objid AS r_objid,
   r.title AS r_title,
   r.rating AS r_rating,
