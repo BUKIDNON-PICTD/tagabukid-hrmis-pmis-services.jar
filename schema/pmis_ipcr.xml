@@ -12,6 +12,9 @@
 		<field name="employee_Name_NameExtension" required="false" searchable="false" caption="Name Ext" visible="true"/>
 		<field name="employee_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
 		<field name="employee_Name_PostNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="employee_position_objid" required="false" searchable="false" visible="false"/>
+		<field name="employee_position_name" required="false" searchable="false" visible="false"/>
+		<field name="employee_dtsigned" searchable="false" visible="false"/>
 		<field name="orgid" required="true" searchable="false" visible="false"/> 
 		<field name="org_name" required="true" searchable="true" caption="Office" visible="true"/> 
 		<field name="org_code" required="false" searchable="false" visible="false"/> 
@@ -22,14 +25,20 @@
 		<field name="reviewer_Name_MiddleName" required="true" searchable="true" visible="false"/>
 		<field name="reviewer_Name_NameExtension" required="false" searchable="false" visible="false"/>
 		<field name="reviewer_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
-		<field name="reviewer_Name_PostNameTitle" required="false" searchable="false" visible="false"/>                   
-		<field name="supervisorid" required="true" searchable="false" visible="false"/>       
-		<field name="supervisor_Name_LastName" required="true" searchable="true" visible="false"/>
-		<field name="supervisor_Name_FirstName" required="true" searchable="true" visible="false"/>
-		<field name="supervisor_Name_MiddleName" required="true" searchable="true" visible="false"/>
-		<field name="supervisor_Name_NameExtension" required="false" searchable="false" visible="false"/>
-		<field name="supervisor_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
-		<field name="supervisor_Name_PostNameTitle" required="false" searchable="false" visible="false"/>            
+		<field name="reviewer_Name_PostNameTitle" required="false" searchable="false" visible="false"/>  
+		<field name="reviewer_position_objid" required="false" searchable="false" visible="false"/>
+		<field name="reviewer_position_name" required="false" searchable="false" visible="false"/>
+		<field name="reviewer_dtsigned" searchable="false" visible="false"/>                 
+		<field name="deptheadid" required="true" searchable="false" visible="false"/>       
+		<field name="depthead_Name_LastName" required="true" searchable="true" visible="false"/>
+		<field name="depthead_Name_FirstName" required="true" searchable="true" visible="false"/>
+		<field name="depthead_Name_MiddleName" required="true" searchable="true" visible="false"/>
+		<field name="depthead_Name_NameExtension" required="false" searchable="false" visible="false"/>
+		<field name="depthead_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="depthead_Name_PostNameTitle" required="false" searchable="false" visible="false"/> 
+		<field name="depthead_position_objid" required="false" searchable="false" visible="false"/>
+		<field name="depthead_position_name" required="false" searchable="false" visible="false"/>
+		<field name="depthead_dtsigned" searchable="false" visible="false"/>            
 		<field name="approverid" required="true" searchable="false" visible="false"/>      
 		<field name="approver_Name_LastName" required="true" searchable="true" visible="false"/>
 		<field name="approver_Name_FirstName" required="true" searchable="true" visible="false"/>
@@ -37,6 +46,9 @@
 		<field name="approver_Name_NameExtension" required="false" searchable="false" visible="false"/>
 		<field name="approver_Name_PreNameTitle" required="false" searchable="false" visible="false"/>
 		<field name="approver_Name_PostNameTitle" required="false" searchable="false" visible="false"/>
+		<field name="approver_position_objid" required="false" searchable="false" visible="false"/>
+		<field name="approver_position_name" required="false" searchable="false" visible="false"/>
+		<field name="approver_dtsigned" searchable="false" visible="false"/>
 
 		<field name="recordlog_datecreated" required="true" searchable="false" caption="Date Created" visible="true"/>
 		<field name="recordlog_createdbyuserid" required="true" searchable="false" visible="false"/>     

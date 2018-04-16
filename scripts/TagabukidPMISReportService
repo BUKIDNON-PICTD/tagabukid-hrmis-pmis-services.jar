@@ -91,7 +91,7 @@ class TagabukidPMISReportService
 		//          }.sort{it.opcode}
 		//      ]   
 		// }.sort{it.mfocode}
-		println mfolist
+		// println mfolist
 		data.reportdata = mfolist;
 	
 		data.parameters = [
@@ -188,7 +188,13 @@ class TagabukidPMISReportService
 			}.sort{it.mfocode}
 		}
 		
-		println items
+		if(params.period == "1st"){
+			params.strperiod = "JANUARY TO JUNE " + params.year
+		}else{
+			params.strperiod = "JULY TO DECEMBER " + params.year
+		}
+
+		// println items
 		data.reportdata = items;
 
 		data.parameters = [
@@ -202,10 +208,8 @@ class TagabukidPMISReportService
 	}
 
 	@ProxyMethod
-	public def getIPCRByEmployee(params){
-		
-
-		params.filter = ''' AND ug.org_objid LIKE $P{orgid} AND dtyp.objid LIKE $P{dtypid} AND d.recordlog_createdbyuserid LIKE $P{userid}  '''
+	public def getSIByIPCRId(params){
+		def data = [:]
 		if(params.period == "1st"){
 			params.strperiod = "JANUARY - JUNE " + params.year
 
@@ -213,21 +217,51 @@ class TagabukidPMISReportService
 		else {
 			params.strperiod = "JULY - DECEMBER " + params.year
 		}
-		
-		def items = em.getIPCRIndividual([year:params.year,period:params.period,PersonId:params.employee.PersonId.toString()]);
-		def data = [:]
-		
-		println items
-
+		println params
+		def items = em.getSIByIPCRId([ipcrid:params.objid]).groupBy({[id:it.mfoid,title:it.mfotitle,code:it.mfocode]}).collect{k,v->
+			 [
+			    mfoid   :k.id,
+			    mfotitle:k.title,
+			    mfocode:k.code,
+			    dpcrlist:v.groupBy({[id:it.dpid,title:it.dptitle,code:it.dpcode]}).collect{q,w->
+                       [ 
+                        dpid    :q.id,
+                        dptitle :q.title,
+                        dpcode  :q.code,
+                        ipcrlist:w.collect{[
+                        		objid: it.objid,
+								ipcrid: it.ipcrid,
+								successindicatorid: it.successindicatorid,
+								qid: it.qid,
+								tid: it.tid,
+								eid: it.eid,
+								remarks: it.remarks,
+                                successindicator:it.successindicator,
+                                q:it.q,
+                                e:it.e,
+                                t:it.t,
+                                ave:([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() > 0 ? toDecimal([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.sum()) / [it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() : null)
+                            ]}
+                       ]
+                 }
+			 ]   
+			}.sort{it.mfocode}
+	 	// println items
 		data.reportdata = items;
 
 		data.parameters = [
-				TITLE  :"Individual Performance Commitment and Review (IPCR)",
-				PERIOD :params.strperiod,
-				OFFICE :params.org,
-
-			
-
+				TITLE        : "INDIVIDUAL PERFORMANCE AND COMMITMENT AND REVIEW (IPCR)",
+				PERIOD       : params.strperiod,
+				OWNERNAME    : params.employee.Name.LastName +", "+ params.employee.Name.FirstName + " " +  params.employee.Name.MiddleName,
+				OWNERTITLE   : params.employee.position.name.toUpperCase(),
+				REVIEWER     : params.reviewer.Name.LastName +", "+ params.reviewer.Name.FirstName + " " +  params.reviewer.Name.MiddleName,
+				REVIEWERTITLE: params.reviewer.position.name.toUpperCase(),
+				APPROVER     : params.approver.Name.LastName +", "+ params.approver.Name.FirstName + " " +  params.approver.Name.MiddleName,
+				APPROVERTITLE: params.approver.position.name.toUpperCase(),
+				DEPTHEAD     : params.depthead.Name.LastName +", "+ params.depthead.Name.FirstName + " " +  params.depthead.Name.MiddleName,
+				DEPTHEADTITLE: params.depthead.position.name.toUpperCase(),
+				DATEFILED    : params.dtfiled,
+				
 			]
 		return data
 
@@ -555,6 +589,32 @@ class TagabukidPMISReportService
 		}
 		params.strperiod = period.toString(); 
 		
+	}
+
+
+	def toInteger(paramvalue){
+		if (paramvalue == null) 
+			return 0
+
+		try{
+			return 
+			new java.math.BigDecimal(paramvalue.toString()).intValue()
+		}
+		catch(e){
+			return 0
+		}
+	}
+
+	def toDecimal(paramvalue){
+		if (paramvalue == null) 
+			return 0.0
+
+		try{
+			return new java.math.BigDecimal(paramvalue.toString())
+		}
+		catch(e){
+			return 0.0 
+		}
 	}
 
 

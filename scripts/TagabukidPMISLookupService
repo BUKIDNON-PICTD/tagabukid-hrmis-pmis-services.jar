@@ -30,7 +30,7 @@ public class TagabukidPMISLookupService
 
 	@ProxyMethod
 	public def lookupOrgUnit( params ) {
-	println params
+	// println params
 		return util.lookup( 'pmissuccessindicators:getOrgUnit', params,'OrgUnitId' ) //lookup for all offices
 	}
 
@@ -100,9 +100,13 @@ public class TagabukidPMISLookupService
 
 	@ProxyMethod
 	public def lookupSuccessIndicatorRatingByType( params ) {
-		println params
+		// println params
 		return util.lookuphrmis( 'pmissuccessindicators:lookupSuccessIndicatorRatingByType', params,'objid' )
 	}
-
+	@ProxyMethod
+	public def lookupEmployeeJobPositionMaster( params ) {
+		// println params
+		return util.lookuphrmis( 'pmissuccessindicators:lookupEmployeeJobPositionMaster', params,'objid' )
+	}
 	
 }

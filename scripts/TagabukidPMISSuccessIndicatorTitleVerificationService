@@ -36,7 +36,7 @@ class TagabukidPMISSuccessIndicatorTitleVerificationService {
             }
             if(i>50)break;
         }
-        println matchList.sort{ it.weight * -1 }
+        // println matchList.sort{ it.weight * -1 }
 
         return matchList.sort{ it.weight * -1 };
 	}

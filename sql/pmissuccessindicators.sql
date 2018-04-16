@@ -573,38 +573,6 @@ SELECT * FROM pmis_behavioral
 WHERE type = $P{type}
 ORDER BY sortorder
 
-[getIPCRIndividual]
-SELECT ipcr.*,
-mfo.`objid` AS mfoobjid,
-mfo.`title` AS mfo,
-op.`objid` AS opobjid,
-op.`title` AS opcr,
-dp.`objid` AS dpobjid,
-dp.`title` AS dpcr,
-ip.`objid` AS ipobjid,
-ip.`title` AS ipcr,
-rq.`objid` AS rqobjid,
-rq.`title` AS rqtitle,
-rq.`rating` AS rqrating,
-re.`objid` AS reobjid,
-re.`title` AS retitle,
-re.`rating` AS rerating,
-rt.`objid` AS rtobjid,
-rt.`title` AS rttitle,
-rt.`rating` AS rtrating
-FROM `pmis_ipcr` ipcr
-INNER JOIN pmis_ipcr_items ipitem ON ipitem.`ipcrid` = ipcr.`objid`
-INNER JOIN pmis_successindicators ip ON ip.`objid` = ipitem.`successindicatorid`
-INNER JOIN pmis_successindicators dp ON dp.`objid` = ip.`parentid`
-INNER JOIN pmis_successindicators op ON op.`objid` = dp.`parentid`
-INNER JOIN pmis_successindicators mfo ON mfo.`objid` = op.`parentid`
-LEFT JOIN pmis_ratings rq ON rq.`objid` = ipitem.`qid`
-LEFT JOIN pmis_ratings re ON re.`objid` = ipitem.`eid`
-LEFT JOIN pmis_ratings rt ON rt.`objid` = ipitem.`tid`
-WHERE ipcr.employee_PersonId = $P{PersonId}
-AND ipcr.period = $P{period}
-AND ipcr.year = $P{year}
-
 [getSuccessIndicatorRatingBaseline]
 SELECT * FROM pmis_ratings WHERE rating = 3 AND `type` = $P{type} AND title IS NOT NULL GROUP BY title ORDER BY title
 
@@ -673,3 +641,6 @@ AND (ri.title LIKE $P{searchtext} OR ri.rating LIKE $P{searchtext})
 
 [deleteSIRating]
 DELETE FROM pmis_successindicators_rating WHERE objid = $P{objid}
+
+[lookupEmployeeJobPositionMaster]
+SELECT * FROM references_tbljobposition WHERE `name` LIKE $P{searchtext} OR `code` LIKE $P{searchtext}
