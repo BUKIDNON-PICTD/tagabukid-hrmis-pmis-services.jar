@@ -406,6 +406,18 @@ WHERE mfo.type = 'mfo'
 AND id.ipcrid = $P{ipcrid}
 ORDER BY dp.code
 
+[getBehavioralByIPCRId]
+SELECT ipbi.*,
+b.`name`,
+b.`description`,
+b.`sortorder`,
+b.`successindicator`,
+b.`type` FROM pmis_ipcr_behavioral ipb
+INNER JOIN pmis_ipcr_behavioral_items ipbi ON ipbi.`parentid` = ipb.`objid`
+INNER JOIN pmis_behavioral b ON b.objid = ipbi.`behavioralid`
+WHERE ipb.`ipcrid` = $P{ipcrid}
+ORDER BY b.`type`, b.`sortorder`
+
 [getSIByIPCRIdV1]
 SELECT 
   id.objid,
@@ -600,7 +612,7 @@ b.`type`
 FROM pmis_ipcr_behavioral_items bi
 INNER JOIN pmis_behavioral b ON b.objid = bi.behavioralid 
 WHERE bi.parentid = $P{parentid}
-ORDER BY b.name,b.type
+ORDER BY b.`type`, b.`sortorder`
 
 [removeIPCRItem]
 DELETE FROM pmis_ipcr_items WHERE objid = $P{objid}

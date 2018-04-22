@@ -48,6 +48,7 @@
 		<field name="approver_Name_PostNameTitle" required="false" searchable="false" visible="false"/>
 		<field name="approver_position_objid" required="false" searchable="false" visible="false"/>
 		<field name="approver_position_name" required="false" searchable="false" visible="false"/>
+		<field name="approver_interveningtask" required="false" searchable="false" visible="false"/>
 		<field name="approver_dtsigned" searchable="false" visible="false"/>
 
 		<field name="recordlog_datecreated" required="true" searchable="false" caption="Date Created" visible="true"/>

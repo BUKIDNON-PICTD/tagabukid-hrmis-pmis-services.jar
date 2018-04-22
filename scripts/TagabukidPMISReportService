@@ -14,6 +14,9 @@ class TagabukidPMISReportService
 	@Service('DateService')
 	def dtSvc 
 
+	@Service('NumberService')
+	def numSvc
+
 	@Service('RPTUtil')
 	def util
 
@@ -217,51 +220,110 @@ class TagabukidPMISReportService
 		else {
 			params.strperiod = "JULY - DECEMBER " + params.year
 		}
-		println params
-		def items = em.getSIByIPCRId([ipcrid:params.objid]).groupBy({[id:it.mfoid,title:it.mfotitle,code:it.mfocode]}).collect{k,v->
-			 [
-			    mfoid   :k.id,
-			    mfotitle:k.title,
-			    mfocode:k.code,
-			    dpcrlist:v.groupBy({[id:it.dpid,title:it.dptitle,code:it.dpcode]}).collect{q,w->
-                       [ 
-                        dpid    :q.id,
-                        dptitle :q.title,
-                        dpcode  :q.code,
-                        ipcrlist:w.collect{[
-                        		objid: it.objid,
-								ipcrid: it.ipcrid,
-								successindicatorid: it.successindicatorid,
-								qid: it.qid,
-								tid: it.tid,
-								eid: it.eid,
-								remarks: it.remarks,
-                                successindicator:it.successindicator,
-                                q:it.q,
-                                e:it.e,
-                                t:it.t,
-                                ave:([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() > 0 ? toDecimal([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.sum()) / [it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() : null)
-                            ]}
-                       ]
-                 }
-			 ]   
-			}.sort{it.mfocode}
+		// println params
+		def ipcrlist = em.getSIByIPCRId([ipcrid:params.objid])
+		def behaviorallist = em.getBehavioralByIPCRId([ipcrid:params.objid])
+		// .groupBy({[id:it.mfoid,title:it.mfotitle,code:it.mfocode]}).collect{k,v->
+		// 	 [
+		// 	    mfoid   :k.id,
+		// 	    mfotitle:k.title,
+		// 	    mfocode:k.code,
+		// 	    dpcrlist:v.groupBy({[id:it.dpid,title:it.dptitle,code:it.dpcode]}).collect{q,w->
+  //                      [ 
+  //                       dpid    :q.id,
+  //                       dptitle :q.title,
+  //                       dpcode  :q.code,
+  //                       ipcrlist:w.collect{[
+  //                       		objid: it.objid,
+		// 						ipcrid: it.ipcrid,
+		// 						successindicatorid: it.successindicatorid,
+		// 						qid: it.qid,
+		// 						tid: it.tid,
+		// 						eid: it.eid,
+		// 						remarks: it.remarks,
+  //                               successindicator:it.successindicator,
+  //                               q:it.q,
+  //                               e:it.e,
+  //                               t:it.t,
+  //                               ave:([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() > 0 ? toDecimal([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.sum()) / [it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() : null)
+  //                           ]}
+  //                      ]
+  //                }
+		// 	 ]   
+		// 	}.sort{it.mfocode}
 	 	// println items
-		data.reportdata = items;
+	 	ipcrlist.each{
+	 		it.ave = ([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() > 0 ? toDecimal([it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.sum()) / [it.q.rating,it.e.rating,it.t.rating].findAll{it!=null}.size() : null)
+	 	}
+	 	def clientave = behaviorallist.groupBy({[objid:it.behavioralid,name:it.name,type:it.type,sortorder:it.sortorder]}).collect{k,v->
+		    [    
+		        objid:k.objid,
+		        name:k.name,
+		        type:k.type,
+		        sortorder:k.sortorder,
+		        total:numSvc.round( v.rating.findAll{it!=null}.sum() > 0 ? v.rating.findAll{it!=null}.sum() / v.rating.size() : null)
+		    ]
+		}.findAll{it.type == "Client"}.sort{it.sortorder}
+
+		def peerave = behaviorallist.groupBy({[objid:it.behavioralid,name:it.name,type:it.type,sortorder:it.sortorder]}).collect{k,v->
+		    [    
+		        objid:k.objid,
+		        name:k.name,
+		        type:k.type,
+		        sortorder:k.sortorder,
+		        total:numSvc.round( v.rating.findAll{it!=null}.sum() > 0 ? v.rating.findAll{it!=null}.sum() / v.rating.size() : null)
+		    ]
+		}.findAll{it.type == "Peer"}.sort{it.sortorder}
+
+		def supervisorave = behaviorallist.groupBy({[objid:it.behavioralid,name:it.name,type:it.type,sortorder:it.sortorder]}).collect{k,v->
+		    [    
+		        objid:k.objid,
+		        name:k.name,
+		        type:k.type,
+		        sortorder:k.sortorder,
+		        total:( v.rating.findAll{it!=null}.sum() > 0 ? v.rating.findAll{it!=null}.sum() / v.rating.size() : null)
+		    ]
+		}.findAll{it.type == "Supervisor"}.sort{it.sortorder}
+
+		
+		def totalave =[]
+		totalave.add(numSvc.round(supervisorave.total.findAll{it!=null}.sum()/supervisorave.rating.size()))
+		totalave.add(numSvc.round(peerave.total.findAll{it!=null}.sum()/peerave.rating.size()))
+		totalave.add(numSvc.round(clientave.total.findAll{it!=null}.sum()/clientave.rating.size()))
+		def avebyweight =[]
+		avebyweight.add(numSvc.round((supervisorave.total.findAll{it!=null}.sum()/supervisorave.rating.size()) * 30 /100))
+		avebyweight.add(numSvc.round((peerave.total.findAll{it!=null}.sum()/peerave.rating.size()) * 20 / 100))
+		avebyweight.add(numSvc.round((clientave.total.findAll{it!=null}.sum()/clientave.rating.size()) * 50 / 100))
+		def finalave = avebyweight.sum()
+
+		data.reportdata = [
+			ipcrlist       : ipcrlist,
+			behaviorallist : behaviorallist,
+		]
 
 		data.parameters = [
-				TITLE        : "INDIVIDUAL PERFORMANCE AND COMMITMENT AND REVIEW (IPCR)",
-				PERIOD       : params.strperiod,
-				OWNERNAME    : params.employee.Name.LastName +", "+ params.employee.Name.FirstName + " " +  params.employee.Name.MiddleName,
-				OWNERTITLE   : params.employee.position.name.toUpperCase(),
-				REVIEWER     : params.reviewer.Name.LastName +", "+ params.reviewer.Name.FirstName + " " +  params.reviewer.Name.MiddleName,
-				REVIEWERTITLE: params.reviewer.position.name.toUpperCase(),
-				APPROVER     : params.approver.Name.LastName +", "+ params.approver.Name.FirstName + " " +  params.approver.Name.MiddleName,
-				APPROVERTITLE: params.approver.position.name.toUpperCase(),
-				DEPTHEAD     : params.depthead.Name.LastName +", "+ params.depthead.Name.FirstName + " " +  params.depthead.Name.MiddleName,
-				DEPTHEADTITLE: params.depthead.position.name.toUpperCase(),
-				DATEFILED    : params.dtfiled,
-				
+				TITLE          : "INDIVIDUAL PERFORMANCE AND COMMITMENT AND REVIEW (IPCR)",
+				PERIOD         : params.strperiod,
+				OWNERNAME      : params.employee.Name.LastName +", "+ params.employee.Name.FirstName + " " +  params.employee.Name.MiddleName,
+				OWNERTITLE     : params.employee.position.name.toUpperCase(),
+				REVIEWER       : params.reviewer.Name.LastName +", "+ params.reviewer.Name.FirstName + " " +  params.reviewer.Name.MiddleName,
+				REVIEWERTITLE  : params.reviewer.position.name.toUpperCase(),
+				APPROVER       : params.approver.Name.LastName +", "+ params.approver.Name.FirstName + " " +  params.approver.Name.MiddleName,
+				APPROVERTITLE  : params.approver.position.name.toUpperCase(),
+				DEPTHEAD       : params.depthead.Name.LastName +", "+ params.depthead.Name.FirstName + " " +  params.depthead.Name.MiddleName,
+				DEPTHEADTITLE  : params.depthead.position.name.toUpperCase(),
+				DATEFILED      : params.dtfiled,
+				CLIENTAVE      : toDecimal(clientave),
+				PEERAVE        : toDecimal(peerave),
+				SUPERVISORAVE  : toDecimal(supervisorave), 
+				TOTALAVE       : toDecimal(totalave),
+				AVEBYWEIGHT    : toDecimal(avebyweight),
+				TPS2           : toDecimal(finalave),
+				TPS1           : toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size())),
+				TPS170         : (toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size()))) * 70 / 100,
+				TPS230         : toDecimal(numSvc.round(finalave * 30 / 100)),
+				INTERVENINGTASK: toDecimal(params.approver.interveningtask),
+				FINALRATING    : [(toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size()))) * 70 / 100,toDecimal(numSvc.round(finalave * 30 / 100)),toDecimal(params.approver.interveningtask)].sum()
 			]
 		return data
 

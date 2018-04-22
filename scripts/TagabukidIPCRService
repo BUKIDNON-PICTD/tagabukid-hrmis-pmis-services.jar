@@ -41,7 +41,7 @@ class TagabukidIPCRService
 		entity.dpcrlist = [];
 		entity.year =  dtSvc.getServerYear()
 		entity.behavioraltypelist = []
-		def c=5,p=3,s=1;
+		def c=6,p=3,s=1;
 		for(def i=1; i<=c;i++){
 			entity.behavioraltypelist.add(
 				[
