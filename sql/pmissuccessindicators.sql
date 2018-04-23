@@ -286,7 +286,9 @@ UPDATE pmis_successindicators SET rgt = rgt + 2 WHERE rgt > $P{myLeft}
 UPDATE pmis_successindicators SET lft = lft + 2 WHERE lft > $P{myLeft}
 
 [getSuccessIndicatorOrg]
-SELECT * FROM pmis_successindicators_org WHERE siid = $P{xxx}
+SELECT o.*,org.Entity_Name,org.Entity_AcronymAbbreviation FROM pmis_successindicators_org o
+INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+WHERE siid = $P{xxx}
 
 [deleteSuccessIndicatorOrg]
 DELETE FROM pmis_successindicators_org WHERE siid = $P{siid} AND orgid = $P{orgid}

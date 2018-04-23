@@ -123,9 +123,15 @@ class TagabukidPMISReportService
 		}else if(params.type == 'OPCR'){
 			params.title = 'Office Performance Commitment and Review Form (OPCR)'
 			items = em.getOPCR();
+			items.each{
+				it.orgs = em.getSuccessIndicatorOrg([xxx:it.opid]).Entity.AcronymAbbreviation.join(',') ;
+			}
 		}else if(params.type == 'DPCR'){
 			params.title = 'Department Performance Commitment and Review Form (DPCR)'
 			items = em.getDPCROrgId( [orgid:params.org.OrgUnitId] );
+			items.each{
+				it.orgs = em.getSuccessIndicatorOrg([xxx:it.dpid]).Entity.AcronymAbbreviation.join(',') ;
+			}
 		}
 		
 		if(params.period == "1st"){
