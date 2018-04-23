@@ -407,6 +407,21 @@ AND id.ipcrid = $P{ipcrid}
 ORDER BY dp.code
 
 [getBehavioralByIPCRId]
+SELECT 
+ipbi.*,
+b.`name`,
+b.`description`,
+b.`sortorder`,
+b.`successindicator`,
+b.`type`,
+xxx.clientcount FROM pmis_ipcr_behavioral ipb
+INNER JOIN pmis_ipcr_behavioral_items ipbi ON ipbi.`parentid` = ipb.`objid`
+INNER JOIN (SELECT xx.objid,@row:=IF(@prev=xx.type,@row,0) + 1 AS clientcount,@prev:=xx.type AS prevtype  FROM pmis_ipcr_behavioral xx WHERE xx.`ipcrid` = $P{ipcrid} ORDER BY xx.`type`) xxx ON xxx.objid = ipbi.`parentid`
+INNER JOIN pmis_behavioral b ON b.objid = ipbi.`behavioralid`
+WHERE ipb.`ipcrid` = $P{ipcrid}
+ORDER BY ipbi.`parentid`,b.`type`, b.`sortorder`
+
+[getBehavioralByIPCRId2]
 SELECT ipbi.*,
 b.`name`,
 b.`description`,
