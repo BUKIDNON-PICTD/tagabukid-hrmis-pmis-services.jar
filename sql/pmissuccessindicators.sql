@@ -651,6 +651,71 @@ FROM pmis_successindicators mfo
 WHERE mfo.type = 'mfo'
 ORDER BY mfo.code
 
+
+[getOPCR]
+SELECT 
+  mfo.objid AS mfoid,
+  mfo.title AS mfotitle,
+  mfo.description AS mfodecription,
+  mfo.allotedbudget AS mfoallotedbudget,
+  mfo.quantity AS mfoquantity,
+  mfo.actualaccomplishment AS mfoactualaccomplishment,
+  mfo.remarks AS mforemarks,
+  mfo.code AS mfocode,
+  mfo.type AS mfotype,
+  op.objid AS opid,
+  op.title AS optitle,
+  op.description AS opdecription,
+  op.allotedbudget AS opallotedbudget,
+  op.quantity AS opquantity,
+  op.actualaccomplishment AS opactualaccomplishment,
+  op.remarks AS opremarks,
+  op.code AS opcode,
+  op.type AS optype
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+WHERE mfo.type = 'mfo'
+ORDER BY mfo.code
+
+
+[getDPCROrgId]
+SELECT 
+  mfo.objid AS mfoid,
+  mfo.title AS mfotitle,
+  mfo.description AS mfodecription,
+  mfo.allotedbudget AS mfoallotedbudget,
+  mfo.quantity AS mfoquantity,
+  mfo.actualaccomplishment AS mfoactualaccomplishment,
+  mfo.remarks AS mforemarks,
+  mfo.code AS mfocode,
+  mfo.type AS mfotype,
+  op.objid AS opid,
+  op.title AS optitle,
+  op.description AS opdecription,
+  op.allotedbudget AS opallotedbudget,
+  op.quantity AS opquantity,
+  op.actualaccomplishment AS opactualaccomplishment,
+  op.remarks AS opremarks,
+  op.code AS opcode,
+  op.type AS optype,
+  dp.objid AS dpid,
+  dp.title AS dptitle,
+  dp.description AS dpdecription,
+  dp.allotedbudget AS dpallotedbudget,
+  dp.quantity AS dpquantity,
+  dp.actualaccomplishment AS dpactualaccomplishment,
+  dp.remarks AS dpremarks,
+  dp.code AS dpcode,
+  dp.type AS dptype
+FROM pmis_successindicators mfo
+INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
+INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
+INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
+WHERE o.orgid = $P{orgid}
+AND mfo.type = 'mfo'
+ORDER BY mfo.code
+
+
 [getRatingBaselineMaster]
 SELECT * FROM pmis_rating WHERE (name LIKE $P{searchtext} OR code LIKE $P{searchtext}) AND type = $P{type}  ORDER BY name
 
