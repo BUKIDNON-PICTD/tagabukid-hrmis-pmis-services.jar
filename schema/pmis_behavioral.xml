@@ -2,9 +2,9 @@
 	<element tablename="pmis_behavioral">
 		<field name = "objid" primary="true" caption = "objid" visible = "false"/>
 		<field name = "sortorder" required="true" caption = "order" visible = "true" />
-		<field name = "type" required="true" caption = "Type" visible = "true" />
-		<field name = "name" required="true" caption = "Behavior" visible = "true"  />
-		<field name = "description" required="false" caption = "Definition" visible = "true"  />
+		<field name = "type" required="true" caption = "Type" visible = "true" searchable="true"/>
+		<field name = "name" required="true" caption = "Behavior" visible = "true" searchable="true" />
+		<field name = "description" required="false" caption = "Definition" visible = "true"  searchable="true"/>
 		<field name = "successindicator" required="false" caption= "Success Indicattor" visible = "true" />
 		<field name = "remarks" required="false" caption = "Remarks" visible = "true"   />
 	</element>

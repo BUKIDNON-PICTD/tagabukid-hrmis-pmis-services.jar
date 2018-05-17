@@ -244,13 +244,13 @@ class TagabukidPMISReportService
 
 		
 		def totalave =[]
-		totalave.add(numSvc.round(supervisorave.total.findAll{it!=null}.sum()/supervisorave.rating.size()))
-		totalave.add(numSvc.round(peerave.total.findAll{it!=null}.sum()/peerave.rating.size()))
-		totalave.add(numSvc.round(clientave.total.findAll{it!=null}.sum()/clientave.rating.size()))
+		totalave.add(numSvc.round(supervisorave.total.findAll{it!=null}.sum() > 0 ? supervisorave.total.findAll{it!=null}.sum()/supervisorave.rating.size():null))
+		totalave.add(numSvc.round(peerave.total.findAll{it!=null}.sum() > 0 ? peerave.total.findAll{it!=null}.sum()/peerave.rating.size():null))
+		totalave.add(numSvc.round(clientave.total.findAll{it!=null}.sum() > 0 ? clientave.total.findAll{it!=null}.sum()/clientave.rating.size():null))
 		def avebyweight =[]
-		avebyweight.add(numSvc.round((supervisorave.total.findAll{it!=null}.sum()/supervisorave.rating.size()) * 30 /100))
-		avebyweight.add(numSvc.round((peerave.total.findAll{it!=null}.sum()/peerave.rating.size()) * 20 / 100))
-		avebyweight.add(numSvc.round((clientave.total.findAll{it!=null}.sum()/clientave.rating.size()) * 50 / 100))
+		avebyweight.add(numSvc.round(supervisorave.total.findAll{it!=null}.sum() > 0 ? (supervisorave.total.findAll{it!=null}.sum()/supervisorave.rating.size()) * 30 /100 : null))
+		avebyweight.add(numSvc.round(peerave.total.findAll{it!=null}.sum() > 0 ? (peerave.total.findAll{it!=null}.sum()/peerave.rating.size()) * 20 / 100 : null))
+		avebyweight.add(numSvc.round(clientave.total.findAll{it!=null}.sum() > 0 ? (clientave.total.findAll{it!=null}.sum()/clientave.rating.size()) * 50 / 100 : null))
 		def finalave = avebyweight.sum()
 
 		data.reportdata = [
@@ -277,11 +277,11 @@ class TagabukidPMISReportService
 				TOTALAVE        : toDecimal(totalave),
 				AVEBYWEIGHT     : toDecimal(avebyweight),
 				TPS2            : toDecimal(finalave),
-				TPS1            : toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size())),
-				TPS170          : (toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size()))) * 70 / 100,
+				TPS1            : toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum() > 0 ?ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size() : null)),
+				TPS170          : (toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum() > 0 ? ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size() : null))) * 70 / 100,
 				TPS230          : toDecimal(numSvc.round(finalave * 30 / 100)),
 				INTERVENINGTASK : toDecimal(params.approver.interveningtask),
-				FINALRATING     : [(toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size()))) * 70 / 100,toDecimal(numSvc.round(finalave * 30 / 100)),toDecimal(params.approver.interveningtask)].sum(),
+				FINALRATING     : [(toDecimal(numSvc.round(ipcrlist.ave.findAll{it!=null}.sum() > 0 ? ipcrlist.ave.findAll{it!=null}.sum()/ipcrlist.ave.findAll{it!=null}.size() : null))) * 70 / 100,toDecimal(numSvc.round(finalave * 30 / 100)),toDecimal(params.approver.interveningtask)].sum(),
 				CLIENTCOUNT     : behaviorallist.findAll{it.type=='Client'}.groupBy{it.parentid}.size(), 					
 				PEERCOUNT       : behaviorallist.findAll{it.type=='Peer'}.groupBy{it.parentid}.size(),
 				SUPERVISORCOUNT : behaviorallist.findAll{it.type=='Supervisor'}.groupBy{it.parentid}.size(),
