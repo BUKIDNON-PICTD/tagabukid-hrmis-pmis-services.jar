@@ -200,7 +200,9 @@ class TagabukidSIMService extends ActiveCrudListService {
 	}
 
     public def getSICode(o){
-		def appcode = o.toUpper();
+		// def appcode = o.toUpper();
+		def yr      = dtSvc.serverYear;
+		def appcode = "PMIS"
 		def prefix  = appcode+yr;
 		return prefix+seqSvc.getNextFormattedSeries(prefix);
     }
@@ -386,10 +388,10 @@ class TagabukidSIMService extends ActiveCrudListService {
 			x.orgs = em.getSuccessIndicatorOrg([xxx:o.objid])
 			if(x.orgs){
 				x.orgs.each{ y ->
-					def org = emorg.findOrgById([orgid:y.orgid])
-					y.objid = org.OrgUnitId.toString()
-					y.name = org.Entity.Name
-					y.code = org.Entity.AcronymAbbreviation
+					def org = em.findOrgById([orgid:y.orgid])
+					y.objid = org.orgunitid
+					y.name = org.name
+					y.code = org.code
 				}
 			}
 		}
@@ -442,7 +444,7 @@ class TagabukidSIMService extends ActiveCrudListService {
 
     @ProxyMethod
     public def getSIByEmployeeOffice(o) {
-    	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.OrgUnitId] );
+    	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.ogrunitid] );
     	dpcrlist.each{
     		it.objid = 'DPCR' + new java.rmi.server.UID();
     		it.ipcrlist = []
@@ -509,7 +511,7 @@ class TagabukidSIMService extends ActiveCrudListService {
 
     @ProxyMethod
     public def findOrgById(o){
-		return emorg.findOrgById([orgid:o])
+		return em.findOrgById([orgid:o])
     }
 
      @ProxyMethod

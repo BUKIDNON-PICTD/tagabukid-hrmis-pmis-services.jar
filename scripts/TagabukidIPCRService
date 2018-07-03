@@ -120,7 +120,7 @@ class TagabukidIPCRService
 
 	@ProxyMethod
     public def getSIByEmployeeOffice(o) {
-    	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.OrgUnitId] );
+    	def dpcrlist = em.getSIByEmployeeOffice( [orgid:o.orgunitid] );
     	dpcrlist.each{
     		it.objid = 'DPCR' + new java.rmi.server.UID();
     		it.ipcrlist = []

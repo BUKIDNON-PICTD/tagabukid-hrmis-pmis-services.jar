@@ -41,7 +41,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo'
 
@@ -54,7 +54,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo'
 
@@ -67,7 +67,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo'
 
@@ -80,7 +80,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo')
 GROUP BY node.title
@@ -131,7 +131,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo'
 
@@ -144,7 +144,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo'
 
@@ -157,7 +157,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo'
 
@@ -170,7 +170,7 @@ INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo')
 GROUP BY node.title
@@ -286,35 +286,35 @@ UPDATE pmis_successindicators SET rgt = rgt + 2 WHERE rgt > $P{myLeft}
 UPDATE pmis_successindicators SET lft = lft + 2 WHERE lft > $P{myLeft}
 
 [getSuccessIndicatorOrg]
-SELECT o.*,org.Entity_Name,org.Entity_AcronymAbbreviation FROM pmis_successindicators_org o
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+SELECT o.*,org.name,org.code FROM pmis_successindicators_org o
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE siid = $P{xxx}
 
 [deleteSuccessIndicatorOrg]
 DELETE FROM pmis_successindicators_org WHERE siid = $P{siid} AND orgid = $P{orgid}
 
 [findOrgById]
-SELECT * FROM subay_org_unit WHERE OrgUnitId = $P{orgid}
+SELECT * FROM references_tblorganizationunit WHERE orgunitid = $P{orgid}
 
 [getOrgUnit]
-SELECT * FROM subay_org_unit
-WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
-OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
-ORDER BY Entity_Name
+SELECT * FROM references_tblorganizationunit
+WHERE (UPPER(name) LIKE $P{searchtext} 
+OR UPPER(code) LIKE $P{searchtext})
+ORDER BY name
 
 [getOrgUnitByParent]
-SELECT * FROM subay_org_unit
-WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
-OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
-AND ParentOrgUnitId = $P{orgparentid}
-ORDER BY Entity_Name
+SELECT * FROM references_tblorganizationunit
+WHERE (UPPER(name) LIKE $P{searchtext} 
+OR UPPER(code) LIKE $P{searchtext})
+AND parentorgunitid = $P{orgparentid}
+ORDER BY name
 
 [getOrgUnitByParents]
-SELECT * FROM subay_org_unit
-WHERE (UPPER(Entity_Name) LIKE $P{searchtext} 
-OR UPPER(Entity_AcronymAbbreviation) LIKE $P{searchtext})
+SELECT * FROM references_tblorganizationunit
+WHERE (UPPER(name) LIKE $P{searchtext} 
+OR UPPER(code) LIKE $P{searchtext})
 ${filter}
-ORDER BY Entity_Name
+ORDER BY name
 
 [getSuccessIndicatorRatings]
 SELECT * FROM pmis_ratings WHERE siid = $P{xxx}
@@ -351,13 +351,13 @@ dp.objid AS dpid,
 dp.title AS dptitle,
 dp.code as dpcode,
 dp.type AS dptype,
-o.orgid,org.Entity_Name AS orgname
+o.orgid,org.name AS orgname
 FROM pmis_successindicators mfo
 INNER JOIN pmis_successindicators op ON op.parentid = mfo.objid
 INNER JOIN pmis_successindicators dp ON dp.parentid = op.objid
 INNER JOIN pmis_successindicators ip ON ip.parentid = dp.objid
 INNER JOIN pmis_successindicators_org o ON o.siid = op.objid OR o.siid = dp.objid
-INNER JOIN tagabukid_subay.subay_org_unit org ON org.OrgUnitId = o.orgid
+INNER JOIN references_tblorganizationunit org ON org.orgunitid = o.orgid
 WHERE o.orgid = $P{orgid}
 AND mfo.type = 'mfo'
 ORDER BY dp.code
